@@ -1,0 +1,12 @@
+/* ============================================================
+   Luồng công khai: KHOA → BỘ MÔN → GIẢNG VIÊN
+   ============================================================ */
+
+export const getDepartment = (khoaId, deptId) => (facultyDepartments[khoaId] || []).find((d) => d.id === deptId)
+
+export const allLecturers = Object.entries(facultyDepartments).flatMap(([khoaId, depts]) => {
+  const khoa = units.khoa.list.find((k) => k.id === khoaId)
+  return depts.flatMap((d) => d.lecturers.map((lc) => ({
+    ...lc, khoaId, khoaName: khoa ? khoa.name : khoaId, deptId: d.id, deptName: d.name,
+  })))
+})
