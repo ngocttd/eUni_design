@@ -1,0 +1,730 @@
+<title>SRS Frontend HUMG Portal</title>
+<meta name="description" content="Đặc tả yêu cầu phần mềm (SRS) cho phần frontend Cổng thông tin điện tử Trường Đại học Mỏ - Địa chất: yêu cầu chức năng, phi chức năng, giao diện ngoài và ma trận truy vết." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+
+<style>
+  :root {
+    --bg: #f5f7fb;
+    --surface: #ffffff;
+    --surface-2: #eceff6;
+    --ink: #16202f;
+    --ink-2: #55607a;
+    --ink-3: #8b95ab;
+    --line: #e2e6f0;
+    --line-strong: #cdd4e2;
+    --accent: #0a3d91;
+    --warm: #d9660b;
+    --code-bg: #f0f2f8;
+    --ok: #2f8f4e;
+    --info: #2563eb;
+    --mute: #6b7488;
+    --font-ui: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    --shadow: 0 1px 2px rgba(10, 30, 70, 0.05), 0 12px 30px -18px rgba(10, 30, 70, 0.22);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d1522; --surface: #131e30; --surface-2: #1b2942;
+      --ink: #e7ebf3; --ink-2: #9aa6ba; --ink-3: #6b7790;
+      --line: #26344c; --line-strong: #35476a;
+      --accent: #7aa7f2; --warm: #f0913f; --code-bg: #1a2740;
+      --ok: #4fb277; --info: #5b8def; --mute: #8b95ab;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 16px 34px -20px rgba(0,0,0,0.55);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d1522; --surface: #131e30; --surface-2: #1b2942;
+    --ink: #e7ebf3; --ink-2: #9aa6ba; --ink-3: #6b7790;
+    --line: #26344c; --line-strong: #35476a;
+    --accent: #7aa7f2; --warm: #f0913f; --code-bg: #1a2740;
+    --ok: #4fb277; --info: #5b8def; --mute: #8b95ab;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 16px 34px -20px rgba(0,0,0,0.55);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--font-ui); font-size: 15px; line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    display: grid; grid-template-columns: 244px minmax(0, 1fr); gap: 46px;
+    max-width: 1220px; margin: 0 auto; padding: 40px 32px 96px;
+  }
+
+  .toc { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow-y: auto; }
+  .toc__brand { font-weight: 700; font-size: 0.95rem; letter-spacing: -0.01em; }
+  .toc__brand span { color: var(--accent); }
+  .toc__meta { font-size: 0.72rem; color: var(--ink-3); margin: 4px 0 16px; font-family: var(--font-mono); }
+  .toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
+  .toc a { display: flex; gap: 8px; padding: 6px 8px; border-radius: 6px; color: var(--ink-2); text-decoration: none; font-size: 0.8rem; line-height: 1.3; }
+  .toc a:hover { background: var(--surface-2); color: var(--ink); }
+  .toc a b { font-family: var(--font-mono); font-weight: 500; color: var(--accent); flex-shrink: 0; }
+  .toc details { margin-top: 12px; }
+  .toc summary { cursor: pointer; font-size: 0.78rem; color: var(--ink-3); }
+
+  main { min-width: 0; }
+  .lede h1 { font-size: clamp(1.85rem, 1.1rem + 2.5vw, 2.55rem); line-height: 1.12; margin: 0 0 12px; letter-spacing: -0.02em; text-wrap: balance; }
+  .lede p { font-size: 1rem; color: var(--ink-2); margin: 0 0 18px; max-width: 64ch; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .chip { font-size: 0.76rem; border: 1px solid var(--line-strong); border-radius: 999px; padding: 4px 11px; color: var(--ink-2); white-space: nowrap; }
+  .chip b { color: var(--ink); font-weight: 600; }
+  .stamp { font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-3); margin-top: 16px; }
+
+  section { margin-top: 60px; scroll-margin-top: 24px; }
+  .s-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; border-bottom: 2px solid var(--accent); padding-bottom: 9px; }
+  .s-head .no { font-family: var(--font-mono); font-size: 0.92rem; color: var(--accent); font-weight: 600; }
+  .s-head h2 { font-size: 1.42rem; margin: 0; letter-spacing: -0.01em; }
+  section > p { max-width: 66ch; color: var(--ink-2); }
+  section > p strong, li strong, td strong { color: var(--ink); font-weight: 600; }
+  h3 { font-size: 1.02rem; margin: 32px 0 8px; letter-spacing: -0.005em; }
+  h3 .tag { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-3); font-weight: 400; margin-left: 8px; }
+  h4 { font-size: 0.86rem; margin: 20px 0 6px; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  ul, ol.list { padding-left: 20px; }
+  li { margin: 3px 0; }
+  li::marker { color: var(--ink-3); }
+
+  code, .mono { font-family: var(--font-mono); font-size: 0.85em; }
+  p code, li code, td code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; color: var(--ink); border: 1px solid var(--line); }
+  .kw { font-weight: 700; color: var(--accent); font-size: 0.92em; }
+
+  .tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin: 14px 0 6px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.82rem; }
+  thead th { text-align: left; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-3); font-weight: 600; padding: 9px 11px; background: var(--surface-2); border-bottom: 1px solid var(--line-strong); white-space: nowrap; }
+  tbody td { padding: 9px 11px; border-top: 1px solid var(--line); vertical-align: top; }
+  tbody tr:first-child td { border-top: 0; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* Requirement tables */
+  .rq td:first-child { white-space: nowrap; }
+  .rid { font-family: var(--font-mono); font-size: 0.76rem; font-weight: 600; color: var(--accent); }
+  .prio { display: inline-block; font-family: var(--font-mono); font-size: 0.66rem; font-weight: 600; padding: 3px 6px; border-radius: 4px; letter-spacing: 0.02em; white-space: nowrap; }
+  .prio.m { background: var(--accent); color: #fff; }
+  .prio.s { background: transparent; color: var(--info); border: 1px solid var(--info); }
+  .prio.c { background: transparent; color: var(--mute); border: 1px solid var(--line-strong); }
+  .rq td ul { padding-left: 16px; margin: 2px 0; }
+  .rq td li { margin: 2px 0; }
+
+  .note, .warn {
+    border-left: 3px solid var(--accent); background: var(--surface);
+    padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: 0.9rem;
+  }
+  .warn { border-left-color: var(--warm); }
+
+  a.ref { color: var(--accent); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); }
+  a.ref:hover { border-bottom-color: var(--accent); }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+  footer.doc { margin-top: 76px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 0.78rem; color: var(--ink-3); font-family: var(--font-mono); }
+
+  @media (max-width: 900px) {
+    .wrap { grid-template-columns: 1fr; gap: 0; padding: 28px 18px 72px; }
+    .toc { position: static; max-height: none; margin-bottom: 8px; }
+    .toc details ol { display: none; }
+    .toc details[open] ol { display: flex; }
+    section { margin-top: 46px; }
+  }
+</style>
+
+<div class="wrap">
+  <nav class="toc" aria-label="Mục lục">
+    <div class="toc__brand"><span>HUMG</span> Digital Portal</div>
+    <div class="toc__meta">Frontend SRS · v1.0 · 2026-09-01</div>
+    <details open>
+      <summary>Mục lục</summary>
+      <ol>
+        <li><a href="#s1"><b>1</b> Giới thiệu</a></li>
+        <li><a href="#s2"><b>2</b> Mô tả tổng thể</a></li>
+        <li><a href="#s3"><b>3</b> Yêu cầu giao diện ngoài</a></li>
+        <li><a href="#s4"><b>4</b> Yêu cầu chức năng</a></li>
+        <li><a href="#s5"><b>5</b> Yêu cầu phi chức năng</a></li>
+        <li><a href="#s6"><b>6</b> Ma trận truy vết</a></li>
+        <li><a href="#s7"><b>7</b> Phụ lục</a></li>
+      </ol>
+    </details>
+  </nav>
+
+  <main>
+    <div class="lede">
+      <h1>Đặc tả yêu cầu phần mềm (SRS) — Frontend Cổng thông tin HUMG</h1>
+      <p>Tài liệu này đặc tả <strong>yêu cầu cho phần giao diện người dùng (frontend)</strong> của Cổng thông tin điện tử Trường Đại học Mỏ - Địa chất. Cấu trúc theo IEEE/ISO 29148. Dùng cho đội phát triển frontend, QA và nghiệm thu.</p>
+      <div class="facts">
+        <span class="chip"><b>React</b> 18 SPA</span>
+        <span class="chip"><b>Vite</b> 5</span>
+        <span class="chip"><b>react-router</b> 6.26</span>
+        <span class="chip">CSS thuần + token</span>
+        <span class="chip">REST API + JSON</span>
+        <span class="chip">i18n VI/EN</span>
+      </div>
+      <div class="facts">
+        <span class="chip">Ưu tiên: <b class="prio m" style="border:0">Bắt buộc</b> <b class="prio s" style="background:transparent">Nên có</b> <b class="prio c" style="background:transparent">Tuỳ chọn</b></span>
+      </div>
+      <p class="stamp">Tham chiếu: "Đặc tả Frontend HUMG Portal" (design/API spec) · HUMG_Mockup_All_Designed/ · wireframe_humg/ · src/routes/sitemap.js</p>
+    </div>
+
+    <!-- ================= 1 ================= -->
+    <section id="s1">
+      <div class="s-head"><span class="no">1</span><h2>Giới thiệu</h2></div>
+
+      <h3>1.1 Mục đích</h3>
+      <p>Xác định đầy đủ, rõ ràng, kiểm thử được các yêu cầu chức năng và phi chức năng mà phần frontend của Cổng thông tin HUMG phải đáp ứng, làm cơ sở cho thiết kế chi tiết, lập trình, kiểm thử và nghiệm thu.</p>
+
+      <h3>1.2 Phạm vi</h3>
+      <p><strong>Trong phạm vi:</strong> ứng dụng web một trang (SPA) gồm (a) website công khai — 11 khối nội dung + trang chủ + tin tức/sự kiện/media + tiện ích + liên hệ + tìm kiếm; (b) trang xác thực; (c) lớp vỏ (shell) và điều hướng của My eUni Portal (Sinh viên, Giảng viên, Phụ huynh, Lãnh đạo) và CMS; (d) hệ thống thiết kế và thư viện component dùng chung; (e) lớp tích hợp API (client).</p>
+      <p><strong>Ngoài phạm vi:</strong> API/backend, cơ sở dữ liệu, hạ tầng máy chủ, hệ thống SSO, nội dung nghiệp vụ chi tiết bên trong từng màn hình portal/CMS, ứng dụng di động gốc.</p>
+
+      <h3>1.3 Định nghĩa &amp; từ viết tắt</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Thuật ngữ</th><th>Giải thích</th></tr></thead>
+        <tbody>
+          <tr><td><b>Khối (block)</b></td><td>Một nhóm nội dung công khai có menu riêng (Giới thiệu, Học tập, Nghiên cứu…).</td></tr>
+          <tr><td><b>Hub / Trang tổng quan</b></td><td>Trang đầu của một khối — dạng dashboard nội dung, không lặp menu.</td></tr>
+          <tr><td><b>PageShell</b></td><td>Khung trang dùng chung cho mọi trang khối công khai (hero + section-nav + sidebar).</td></tr>
+          <tr><td><b>Section-nav</b></td><td>Menu bên trái của một khối.</td></tr>
+          <tr><td><b>My eUni Portal</b></td><td>Khu vực cá nhân hoá sau đăng nhập, theo vai trò.</td></tr>
+          <tr><td><b>CMS</b></td><td>Hệ quản trị nội dung tại <code>/cms</code>.</td></tr>
+          <tr><td><b>SPA</b></td><td>Single-Page Application.</td></tr>
+          <tr><td><b>SSO</b></td><td>Single Sign-On (đăng nhập một lần).</td></tr>
+          <tr><td><b>WCAG</b></td><td>Web Content Accessibility Guidelines.</td></tr>
+          <tr><td><b>LCP / CLS / INP</b></td><td>Core Web Vitals: Largest Contentful Paint / Cumulative Layout Shift / Interaction to Next Paint.</td></tr>
+          <tr><td><b>PHẢI / NÊN / CÓ THỂ</b></td><td>Mức độ ràng buộc (RFC 2119): bắt buộc / khuyến nghị mạnh / tuỳ chọn.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>1.4 Tài liệu tham chiếu</h3>
+      <ol class="list">
+        <li>Đặc tả Frontend HUMG Portal (design system, thư viện component, danh sách ~130 API) — tài liệu đi kèm.</li>
+        <li>Bộ wireframe <code>wireframe_humg/</code> và mockup <code>HUMG_Mockup_All_Designed/</code> (PG-PUB, PG-EDU, PG-RES, PG-COO, PG-LIFE, PG-LIB, PG-STU, PG-STAFF, PG-PAR, PG-PORT, CMS, AUTH).</li>
+        <li>Sơ đồ site <code>sitemap_new.png</code> và <code>src/routes/sitemap.js</code>.</li>
+        <li>IEEE/ISO/IEC 29148:2018 — Requirements engineering.</li>
+        <li>WCAG 2.1 (mức AA). RFC 2119. Nghị định 42/2022/NĐ-CP về cung cấp thông tin và dịch vụ công trực tuyến.</li>
+      </ol>
+
+      <h3>1.5 Bố cục tài liệu</h3>
+      <p>Mục 2 mô tả bối cảnh, người dùng, ràng buộc, giả định. Mục 3 đặc tả giao diện ngoài (UI, API, giao thức). Mục 4 liệt kê yêu cầu chức năng theo module, mỗi yêu cầu có mã, phát biểu, tiêu chí chấp nhận và mức ưu tiên. Mục 5 là yêu cầu phi chức năng. Mục 6 là ma trận truy vết. Mục 7 là phụ lục (danh mục route, Definition of Done).</p>
+    </section>
+
+    <!-- ================= 2 ================= -->
+    <section id="s2">
+      <div class="s-head"><span class="no">2</span><h2>Mô tả tổng thể</h2></div>
+
+      <h3>2.1 Bối cảnh sản phẩm</h3>
+      <p>Frontend là một SPA React tách rời backend, giao tiếp qua REST/JSON. Hai lớp: <strong>công khai</strong> (không đăng nhập, phục vụ truyền thông – tuyển sinh – tra cứu) và <strong>eUni</strong> (portal cá nhân hoá + CMS, sau đăng nhập). Nội dung động do CMS cấp; dữ liệu nghiệp vụ do các hệ thống đào tạo/NCKH/thư viện cấp qua API. Hiện dữ liệu là mock trong <code>src/data/*.js</code>, sẽ thay bằng lớp API client.</p>
+
+      <h3>2.2 Chức năng chính (tóm tắt)</h3>
+      <ul>
+        <li>Trình bày nội dung 11 khối công khai + trang chủ theo hệ thống thiết kế thống nhất, responsive.</li>
+        <li>Điều hướng đa cấp: header (5 dropdown + 3 link nhanh), section-nav khối, breadcrumb, footer, drawer mobile, tìm kiếm toàn cục, chuyển ngữ.</li>
+        <li>Danh sách có lọc / sắp xếp / phân trang và trang chi tiết cho: chương trình đào tạo, đề tài, công bố, chuyên gia, đối tác, dự án, CLB, hoạt động, tin tức, sự kiện, tài liệu thư viện, đơn vị, giảng viên.</li>
+        <li>Biểu mẫu công khai: liên hệ, tư vấn tuyển sinh, cơ hội hợp tác, đăng ký sự kiện.</li>
+        <li>Xác thực: đăng nhập SSO, đăng nhập phụ huynh, đăng nhập Microsoft 365, quên/đổi mật khẩu, quản lý phiên, bảo vệ route.</li>
+        <li>Vỏ portal &amp; CMS: layout sidebar, chuông thông báo, thoát cổng, phân quyền route.</li>
+      </ul>
+
+      <h3>2.3 Đối tượng người dùng</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Nhóm</th><th>Đặc điểm</th><th>Nhu cầu chính</th></tr></thead>
+        <tbody>
+          <tr><td>Khách / Thí sinh &amp; phụ huynh tương lai</td><td>Không đăng nhập, đa dạng thiết bị, nhiều truy cập từ mobile mùa tuyển sinh.</td><td>Thông tin tuyển sinh, ngành đào tạo, học phí, điểm chuẩn, tư vấn.</td></tr>
+          <tr><td>Sinh viên</td><td>Có tài khoản eUni; dùng cả web công khai lẫn portal.</td><td>Tra cứu quy chế/biểu mẫu/lịch, vào portal xem điểm–học phí–TKB.</td></tr>
+          <tr><td>Giảng viên / Cán bộ</td><td>Có tài khoản; dùng desktop là chính.</td><td>Quy định, biểu mẫu, danh bạ, NCKH; vào portal quản lý lớp.</td></tr>
+          <tr><td>Phụ huynh</td><td>Tài khoản riêng liên kết hồ sơ sinh viên; ít rành công nghệ.</td><td>Theo dõi kết quả, điểm danh, học phí của con.</td></tr>
+          <tr><td>Lãnh đạo</td><td>Tài khoản vai trò cao; xem báo cáo, phê duyệt.</td><td>Dashboard điều hành, chỉ số, cảnh báo.</td></tr>
+          <tr><td>Quản trị nội dung (CMS)</td><td>Ban Truyền thông; thao tác biên tập thường xuyên.</td><td>Soạn/duyệt/xuất bản bài viết, quản lý media, banner, menu.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>2.4 Môi trường vận hành</h3>
+      <ul>
+        <li>Trình duyệt: 2 phiên bản mới nhất của Chrome, Edge, Firefox, Safari (macOS); Safari iOS ≥ 15; Chrome Android ≥ 100. Không hỗ trợ Internet Explorer.</li>
+        <li>Thiết bị: điện thoại (≥ 320px), máy tính bảng, laptop/desktop (đến 1920px+).</li>
+        <li>Kết nối: hoạt động ổn định trên 3G/4G; tối ưu cho tải chậm.</li>
+        <li>Yêu cầu JavaScript bật. (Xem NFR-SEO-03 về prerender cho SEO.)</li>
+      </ul>
+
+      <h3>2.5 Ràng buộc thiết kế &amp; triển khai</h3>
+      <ul>
+        <li>Công nghệ cố định: React 18, Vite 5, react-router-dom 6.26, CSS thuần với biến CSS (<code>--humg-*</code>). <span class="kw">KHÔNG</span> dùng thư viện UI component ngoài trừ khi được duyệt.</li>
+        <li>Hệ thống thiết kế: một tông navy <code>#0a3d91</code> cho toàn bộ khối công khai; cam <code>#ff9800</code> chỉ làm điểm nhấn nhỏ. Token định nghĩa tại <code>src/index.css :root</code>.</li>
+        <li>Bộ icon nội tuyến tự vẽ (<code>src/lib/Icon.jsx</code>), không phụ thuộc icon font.</li>
+        <li>Nguồn cấu trúc route &amp; menu: <code>src/routes/sitemap.js</code>. Bỏ mục khỏi menu vẫn phải giữ route.</li>
+        <li>Ngôn ngữ giao diện: Tiếng Việt là chính, có bản Tiếng Anh (song song).</li>
+        <li>Mục tiêu tiếp cận: WCAG 2.1 mức AA.</li>
+      </ul>
+
+      <h3>2.6 Giả định &amp; phụ thuộc</h3>
+      <ul>
+        <li>Backend cung cấp đầy đủ API theo danh sách ở tài liệu đi kèm (envelope <code>{data, meta}</code>, thời gian ISO-8601, ảnh đa kích thước + <code>alt</code>).</li>
+        <li>CMS cung cấp nội dung có cấu trúc cho từng khối và bài viết/sự kiện/media/banner/menu.</li>
+        <li>Hệ thống SSO và OAuth Microsoft 365 sẵn sàng; backend trả access + refresh token và thông tin vai trò.</li>
+        <li>Có CDN phục vụ ảnh/tài liệu; font tải từ Google Fonts hoặc self-host.</li>
+      </ul>
+
+      <h3>2.7 Phân bổ theo phiên bản</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Bản</th><th>Nội dung</th></tr></thead>
+        <tbody>
+          <tr><td><b>v1.0</b></td><td>Toàn bộ website công khai + xác thực + vỏ portal/CMS + i18n VI. Bản EN ở mức khung (nút chuyển + key i18n sẵn sàng).</td></tr>
+          <tr><td><b>v1.1</b></td><td>Hoàn thiện nội dung EN; dark mode; prerender/SSR cho trang nội dung; nối handler phân trang thực.</td></tr>
+          <tr><td><b>v2.0</b></td><td>Chi tiết nghiệp vụ các màn hình portal &amp; CMS (ngoài phạm vi SRS này).</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- ================= 3 ================= -->
+    <section id="s3">
+      <div class="s-head"><span class="no">3</span><h2>Yêu cầu giao diện ngoài</h2></div>
+
+      <h3>3.1 Giao diện người dùng</h3>
+      <ul>
+        <li><strong>Hệ thống thiết kế:</strong> token màu / khoảng cách / bo góc / bóng / breakpoint theo tài liệu đi kèm §2. Mọi màu lấy từ token, không hardcode.</li>
+        <li><strong>Layout shell:</strong> <code>AppLayout</code> (Header 2 tầng + Footer) cho công khai; <code>AuthLayout</code> (không header/footer) cho xác thực; <code>PortalLayout</code> (sidebar navy + topbar) cho eUni &amp; CMS.</li>
+        <li><strong>Khung trang khối:</strong> <code>PageShell</code> với 4 biến thể thân trang (mặc định / +sidebar / +section-nav / +cả hai).</li>
+        <li><strong>Thư viện component dùng chung</strong> (~22): PageShell, SectionNav, Panel, TileGrid, DataTable, StatRow, Chips, FilterBar, Pagination, LinkList, SupportCard, MetaBar, NewsMini, DocList, StepList, Faq, HeroSearch, MediaCard, ArticleRow, ShareBar, Lightbox, Brand. Đặc tả props tại tài liệu đi kèm §4.</li>
+        <li><strong>Breakpoint:</strong> 1280 / 1080 / 960 / 720 / 560 px (chi tiết NFR-COMPAT-02).</li>
+      </ul>
+
+      <h3>3.2 Giao diện phần cứng</h3>
+      <p>Không có yêu cầu phần cứng riêng. Ứng dụng chạy trên trình duyệt của thiết bị người dùng (§2.4).</p>
+
+      <h3>3.3 Giao diện phần mềm (API)</h3>
+      <ul>
+        <li>Giao tiếp REST/JSON, tiền tố <code>/api/v1</code>. Danh sách endpoint đầy đủ ở tài liệu đi kèm §8 (~130 endpoint, 11 nhóm).</li>
+        <li>Envelope: list <code>{ data: [], meta: { page, limit, total } }</code>; detail <code>{ data: {} }</code>. Lỗi: <code>{ error: { code, message, fields? } }</code> + HTTP status chuẩn.</li>
+        <li>Tham số list dùng chung: <code>page, limit, q, sort, lang</code>.</li>
+        <li>Xác thực: header <code>Authorization: Bearer &lt;access&gt;</code> cho <code>/me/*</code> và eUni/CMS. OAuth 2.0 Authorization Code cho Microsoft 365.</li>
+        <li>Fonts: Google Fonts (<code>Be Vietnam Pro</code>, <code>IBM Plex Mono</code> — hoặc self-host). Icon: nội tuyến, không tải ngoài.</li>
+      </ul>
+
+      <h3>3.4 Giao diện truyền thông</h3>
+      <ul>
+        <li>Toàn bộ qua HTTPS. Nội dung tĩnh hỗ trợ <code>ETag</code> / <code>Cache-Control</code>; client dùng chiến lược stale-while-revalidate.</li>
+        <li>Thông báo portal: polling <code>GET /me/notifications</code> theo chu kỳ (khuyến nghị 60s) hoặc WebSocket/SSE nếu backend hỗ trợ (tuỳ chọn v1.1).</li>
+        <li>Tải file (biểu mẫu, tài liệu): tải trực tiếp qua URL lưu trữ (redirect từ API), không proxy qua frontend.</li>
+      </ul>
+    </section>
+
+    <!-- ================= 4 ================= -->
+    <section id="s4">
+      <div class="s-head"><span class="no">4</span><h2>Yêu cầu chức năng</h2></div>
+      <p>Mỗi yêu cầu: <b>Mã</b> · phát biểu (dùng <span class="kw">PHẢI</span>/<span class="kw">NÊN</span>/<span class="kw">CÓ THỂ</span>) · <b>tiêu chí chấp nhận</b> · <b>ưu tiên</b> (<span class="prio m" style="border:0">Bắt buộc</span> / <span class="prio s" style="background:transparent">Nên có</span> / <span class="prio c" style="background:transparent">Tuỳ chọn</span>).</p>
+
+      <h3>4.1 Khung &amp; điều hướng <span class="tag">FR-NAV</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu &amp; tiêu chí chấp nhận</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">FR-NAV-01</td><td>Header gồm thanh tiện ích (36px) và hàng chính (72px). Hàng chính <span class="kw">PHẢI</span> dính trên đỉnh khi cuộn.<ul><li>Cuộn xuống ≥ 80px: hàng chính vẫn hiển thị, có bóng nhẹ; thanh tiện ích có thể ẩn.</li></ul></td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-NAV-02</td><td>Menu chính có 5 mục dropdown (Giới thiệu, Học tập, Nghiên cứu, Hợp tác, Đời sống) và 3 link nhanh (Thư viện, Sinh viên, Giảng viên/Cán bộ). Dropdown mở khi hover (desktop) và khi focus/Enter (bàn phím).<ul><li>Đóng bằng <kbd>Esc</kbd>, click ngoài, hoặc chuyển focus ra ngoài.</li><li>Mục cha có <code>aria-expanded</code>; danh sách con là <code>&lt;ul role="menu"&gt;</code>.</li></ul></td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-NAV-03</td><td>Ở ≤ 960px, toàn bộ điều hướng <span class="kw">PHẢI</span> gộp thành drawer trượt, chứa đủ 11 khối + Trang chủ + Phụ huynh + Lãnh đạo.<ul><li>Mở drawer khoá cuộn nền, có lớp phủ; đóng bằng nút X, <kbd>Esc</kbd>, click lớp phủ.</li><li>Focus bị bẫy trong drawer khi mở; trả focus về nút mở khi đóng.</li></ul></td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-NAV-04</td><td>Mọi trang khối <span class="kw">PHẢI</span> hiển thị breadcrumb; phần tử cuối là trang hiện tại (không link); <code>&lt;nav aria-label="Breadcrumb"&gt;</code>.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-NAV-05</td><td>Section-nav <span class="kw">PHẢI</span> đánh dấu mục khớp URL hiện tại (khớp sâu cho path &gt; 2 cấp), dính top 88px.<ul><li>≤ 960px: thu thành nút disclosure hiển thị nhãn trang hiện tại; mở/đóng bằng click/Enter.</li></ul></td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-NAV-06</td><td>Ô tìm ở header: nhập ≥ 2 ký tự <span class="kw">PHẢI</span> gọi gợi ý (<code>/search/suggest</code>) với debounce ~250ms; nhấn Enter điều hướng tới <code>/tim-kiem?q=&lt;từ khoá&gt;</code>.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-NAV-07</td><td>Nút VI/EN <span class="kw">PHẢI</span> đổi ngôn ngữ hiển thị mà giữ nguyên route; lưu lựa chọn (localStorage) và áp dụng ở lần truy cập sau; đặt <code>&lt;html lang&gt;</code> tương ứng.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-NAV-08</td><td>Nút "Đăng nhập eUni": chưa đăng nhập → điều hướng <code>/dang-nhap</code>; đã đăng nhập → menu tài khoản (Vào cổng theo vai trò / Thoát cổng).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-NAV-09</td><td>Footer 4 cột dựng từ <code>/navigation/footer</code>; responsive 3 → 2 → 1 cột theo breakpoint; luôn hiển thị thông tin cơ quan chủ quản, hotline, email, liên kết chính sách.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-NAV-10</td><td>Route không khớp <span class="kw">PHẢI</span> hiển thị trang 404 có tiêu đề rõ ràng, link về trang chủ và ô tìm kiếm; HTTP 200 ở client, đặt <code>&lt;title&gt;</code> "Không tìm thấy trang".</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-NAV-11</td><td>Khi đổi route, trang <span class="kw">PHẢI</span> cuộn về đầu (trừ khi điều hướng bằng nút back của trình duyệt — khôi phục vị trí cuộn cũ).</td><td><span class="prio s">Nên có</span></td></tr>
+          <tr><td class="rid">FR-NAV-12</td><td>Liên kết nội bộ dùng <code>&lt;Link&gt;</code> (điều hướng SPA, không tải lại). Liên kết ngoài mở tab mới với <code>rel="noopener noreferrer"</code> và biểu tượng "mở ngoài".</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-NAV-13</td><td>Trang <code>/sitemap</code> <span class="kw">PHẢI</span> liệt kê toàn bộ route công khai theo nhóm khối.</td><td><span class="prio s">Nên có</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>4.2 Trang chủ <span class="tag">FR-HOME · /</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu &amp; tiêu chí chấp nhận</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">FR-HOME-01</td><td>Toàn bộ dữ liệu trang chủ <span class="kw">PHẢI</span> lấy từ một lần gọi <code>GET /home</code>; hiển thị skeleton theo khối trong lúc tải.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-HOME-02</td><td>Hero hiển thị: kicker "60 NĂM", tiêu đề slide (đa dòng), "1966 – 2026", motto, các chip, 2 nút CTA; ảnh nền phủ toàn chiều rộng với lớp phủ sáng dần từ trái.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-HOME-03</td><td>Hero slider tự chuyển sau ~6.5s; có chấm điều hướng (dots) bấm được; <span class="kw">PHẢI</span> dừng auto khi con trỏ hover hoặc có focus bên trong; với <code>prefers-reduced-motion</code> thì không tự chuyển.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-HOME-04</td><td>Ảnh hero lỗi tải <span class="kw">PHẢI</span> ẩn lớp ảnh (giữ nền gradient) mà không làm vỡ bố cục hay che chữ.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-HOME-05</td><td>QuickBar: 8 lối tắt trên một hàng ngang (desktop), thẻ nổi đè lên đáy hero. Responsive: 4 cột ≤ 1080px, 2 cột ≤ 720px (bỏ hiệu ứng đè).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-HOME-06</td><td>"Dành cho bạn": 6 thẻ đối tượng (icon + tên + mô tả + ảnh + mũi tên); cả thẻ là liên kết. Cột: 6 → 3 (≤ 1180) → 2 (≤ 720) → 1 (≤ 560).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-HOME-07</td><td>Khối Tin – Sự kiện – Media: 3 panel; tab trong panel Media chuyển nội dung không tải lại trang; ≤ 1080px 2 cột, ≤ 720px 1 cột.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-HOME-08</td><td>Dải đối tác cuộn ngang liên tục; dừng khi hover; đứng yên khi <code>prefers-reduced-motion</code>.</td><td><span class="prio s">Nên có</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>4.3 Mẫu trang khối (áp dụng cho mọi khối) <span class="tag">FR-BLK</span></h3>
+      <p>Các khối Giới thiệu, Học tập, Nghiên cứu, Hợp tác, Đời sống, Thư viện dùng chung mẫu sau; yêu cầu riêng của từng khối ở 4.4–4.9.</p>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu &amp; tiêu chí chấp nhận</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">FR-BLK-01</td><td>Mỗi khối có một section-nav lấy từ <code>/navigation/section/:block</code>, một trang hub và các trang chi tiết; tất cả render qua <code>PageShell</code>.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-BLK-02</td><td>Trang hub <span class="kw">PHẢI</span> là dashboard nội dung: mở đầu bằng số liệu tổng hợp (<code>StatRow</code>) hoặc ô tìm nhanh, tiếp theo là nội dung nổi bật cụ thể và tin tức. <span class="kw">KHÔNG</span> được là lưới ô sao chép nguyên danh sách section-nav.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-BLK-03</td><td>Trang danh sách <span class="kw">PHẢI</span> có <code>FilterBar</code> (ô tìm + các select + sắp xếp) + kết quả phân trang + bộ đếm "hiện / tổng"; nút "Đặt lại" xoá toàn bộ bộ lọc.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-BLK-04</td><td>Trạng thái bộ lọc &amp; trang <span class="kw">PHẢI</span> phản ánh trong query URL (<code>?q=&amp;page=&amp;...</code>) để chia sẻ / back giữ nguyên; đổi bộ lọc đưa về trang 1.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-BLK-05</td><td>Danh sách rỗng sau lọc hiển thị thông báo "Không tìm thấy … phù hợp" + gợi ý đặt lại.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-BLK-06</td><td>Trang chi tiết <span class="kw">PHẢI</span> có breadcrumb đầy đủ, sidebar liên quan ("… khác", "Xem thêm", SupportCard) và xử lý id/slug không tồn tại (thông báo "Không tìm thấy" + link về danh sách), không trắng trang.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-BLK-07</td><td>Tô màu: mọi khối dùng một tông navy chung; badge trạng thái dùng màu ngữ nghĩa (xanh lá = đang thực hiện/hoàn tất, cam = chờ/cấp nhà nước, xanh dương = cấp Bộ, đỏ = ưu tiên cao).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-BLK-08</td><td>Khi có wireframe mới cho một khối, chỉ đổi bố cục / style component; <span class="kw">PHẢI</span> giữ nguyên mọi route, luồng điều hướng và trường dữ liệu đã có.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>4.4 Giới thiệu HUMG <span class="tag">FR-ABOUT · /gioi-thieu</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu &amp; tiêu chí chấp nhận</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">FR-ABOUT-01</td><td>Section-nav <span class="kw">PHẢI</span> là danh sách phẳng 7 mục: Tổng quan · Thông điệp Hiệu trưởng · Lịch sử phát triển · Sứ mạng – Tầm nhìn – Giá trị · Thành tựu &amp; con số nổi bật · Cơ cấu tổ chức · Đội ngũ cán bộ, giảng viên.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-ABOUT-02</td><td>Trang Tổng quan: giới thiệu + <code>StatRow</code> (kèm liên kết "Xem đầy đủ" tới trang "HUMG qua các con số") + danh sách giá trị theo đuổi.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-ABOUT-03</td><td>Trang Cơ cấu tổ chức: sơ đồ + lưới "Các khối đơn vị" dẫn tới Ban Giám hiệu, Khoa/Viện, Phòng/Ban, Trung tâm/Viện, Đơn vị trực thuộc, Đội ngũ, Danh sách chuyên gia.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-ABOUT-04</td><td>Chi tiết đơn vị (Phòng/Ban, Trung tâm/Viện, Đơn vị trực thuộc): thẻ hồ sơ (ảnh 4:3 + Trưởng đơn vị / ĐT / Email / năm thành lập + chip số liệu) → panel "Chức năng, nhiệm vụ" → panel "Nhân sự" (bảng Họ tên · Chức vụ · Email). <span class="kw">KHÔNG</span> dùng ảnh bìa 16:9 khổ lớn.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-ABOUT-05</td><td>Chi tiết Khoa: thẻ hồ sơ + hệ tab (Ban chủ nhiệm khoa · Bộ môn · Đào tạo); tab mặc định là tab khả dụng đầu tiên.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-ABOUT-06</td><td>Luồng Khoa → Bộ môn → Danh sách giảng viên → Hồ sơ giảng viên <span class="kw">PHẢI</span> hoạt động qua các route <code>/gioi-thieu/khoa/:id</code> → <code>/bo-mon/:bmId</code> → <code>/giang-vien/:gvId</code>.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-ABOUT-07</td><td>Các trang đã rút khỏi menu (HUMG qua các con số, Ban Giám hiệu, danh sách Khoa/Phòng/Trung tâm/Đơn vị) <span class="kw">PHẢI</span> vẫn truy cập được bằng URL trực tiếp và qua sidebar "Xem nhanh" / lưới "Các khối đơn vị".</td><td><span class="prio m">Bắt buộc</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>4.5 Học tập &amp; Tuyển sinh <span class="tag">FR-EDU · /hoc-tap</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu &amp; tiêu chí chấp nhận</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">FR-EDU-01</td><td>Hub Học tập: <code>StatRow</code> "Đào tạo trong những con số" + lĩnh vực đào tạo + tin học vụ.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-EDU-02</td><td>Chương trình đào tạo: danh sách lọc theo khoa / hệ đào tạo / lĩnh vực; chi tiết có hệ tab (Tổng quan · Chuẩn đầu ra · Khung chương trình · Cơ hội nghề nghiệp) + tài liệu tải về.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-EDU-03</td><td>Tuyển sinh là sub-block riêng với section-nav 11 mục. Hub tuyển sinh: <code>StatRow</code> + phương thức xét tuyển (<code>StepList</code>) + mốc thời gian gần nhất + tin + tài liệu. <span class="kw">KHÔNG</span> lặp menu bằng lưới ô.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-EDU-04</td><td>Trang "Tra cứu điểm chuẩn": chọn năm tuyển sinh (select) → bảng điểm chuẩn theo ngành + tổ hợp; ghi chú "mang tính tham khảo".</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-EDU-05</td><td>Trang "Tư vấn tuyển sinh": form (họ tên, SĐT, email, ngành quan tâm, nội dung) gọi <code>POST /admissions/advisory</code>; theo FR-FORM-*.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-EDU-06</td><td>Trang E-learning: lưới "Công cụ học tập" (4 ô, <span class="kw">PHẢI</span> có liên kết đích thực) + "Truy cập nhanh" (LMS/Teams/Zoom/Thư viện số) + khóa học nổi bật + sidebar DocList hướng dẫn.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-EDU-07</td><td>Trang "Tra cứu kết quả học tập" yêu cầu đăng nhập vai trò Sinh viên; chưa đăng nhập hiển thị lời mời đăng nhập kèm nút.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-EDU-08</td><td>Trang Biểu mẫu: bảng kho biểu mẫu có lọc theo nhóm + định dạng + tìm tên; nút tải gọi <code>/forms/:id/download</code>; hiển thị meta ("PDF · 1.2 MB").</td><td><span class="prio m">Bắt buộc</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>4.6 Nghiên cứu <span class="tag">FR-RES · /nghien-cuu</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu &amp; tiêu chí chấp nhận</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">FR-RES-01</td><td>Hub: <code>StatRow</code> KH&amp;CN + lĩnh vực nghiên cứu trọng điểm + tin nghiên cứu nổi bật.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-RES-02</td><td>Đề tài / Dự án &amp; Công bố khoa học: danh sách theo FR-BLK-03/04; mỗi mục hiển thị badge trạng thái/cấp; có trang chi tiết (chủ nhiệm, thành viên, kinh phí, thanh tiến độ, sản phẩm).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-RES-03</td><td>Danh sách chuyên gia: lọc theo khoa / lĩnh vực; hồ sơ chuyên gia hiển thị hướng nghiên cứu, công bố, h-index, đề tài, email liên hệ.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-RES-04</td><td>Nhóm nghiên cứu, Hội nghị/Hội thảo, Phòng thí nghiệm: danh sách + chi tiết theo mẫu FR-BLK.</td><td><span class="prio s">Nên có</span></td></tr>
+          <tr><td class="rid">FR-RES-05</td><td>Tô màu khối Nghiên cứu <span class="kw">PHẢI</span> dùng tông navy chung (không dùng tím cho badge phạm vi).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>4.7 Hợp tác <span class="tag">FR-COO · /hop-tac</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu &amp; tiêu chí chấp nhận</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">FR-COO-01</td><td>Hub: <code>StatRow</code> + lĩnh vực hợp tác + hoạt động hợp tác nổi bật theo năm + tin.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-COO-02</td><td>Danh sách đối tác: lưới logo có lọc theo khu vực (trong / ngoài nước) và lĩnh vực; trang chi tiết đối tác.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-COO-03</td><td>Chương trình / Dự án hợp tác: danh sách + chi tiết (đối tác, thời gian, trạng thái). Trao đổi &amp; Học bổng: hệ tab (Trao đổi SV · Học bổng · Ngắn hạn) + quy trình đăng ký (<code>StepList</code>).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-COO-04</td><td>Trang "Cơ hội hợp tác": form gọi <code>POST /cooperation/inquiry</code>; theo FR-FORM-*.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>4.8 Đời sống <span class="tag">FR-LIFE · /doi-song</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu &amp; tiêu chí chấp nhận</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">FR-LIFE-01</td><td>Hub: banner + <code>StatRow</code> + "Điểm nhấn đời sống sinh viên" + tin nổi bật; sidebar "Sự kiện sắp diễn ra".</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-LIFE-02</td><td>Hoạt động sinh viên, Câu lạc bộ, Việc làm – Khởi nghiệp: danh sách + chi tiết theo mẫu FR-BLK.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-LIFE-03</td><td>Các trang Ký túc xá, Y tế, Dịch vụ Campus, Hỗ trợ sinh viên, Đoàn – Hội, Thể thao – Văn hóa: trang thông tin (bảng / danh sách thẻ / bài viết).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-LIFE-04</td><td>Khối Đời sống <span class="kw">PHẢI</span> dùng tông navy chung (không dùng tông xanh lá làm màu khối).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>4.9 Thư viện <span class="tag">FR-LIB · /thu-vien</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu &amp; tiêu chí chấp nhận</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">FR-LIB-01</td><td>Hub: ô tra cứu nhanh + <code>StatRow</code> + dịch vụ thư viện + tin.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-LIB-02</td><td>Trang "Tìm tài liệu": <code>FilterBar</code> (loại tài liệu, năm, ngôn ngữ) + kết quả phân trang + trang chi tiết tài liệu (thư mục, số bản, vị trí).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-LIB-03</td><td>Trang "Thư viện số": lưới truy cập theo loại (liên kết kèm tham số <code>?loai=</code>) + CSDL ngoài + tài liệu mới (FilterBar) + <code>StatRow</code>.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-LIB-04</td><td>"Tài liệu của tôi" yêu cầu đăng nhập (SV/GV); hiển thị đang mượn, lịch sử, đặt trước.</td><td><span class="prio s">Nên có</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>4.10 Sinh viên / Giảng viên (công khai) <span class="tag">FR-AUD · /sinh-vien · /giang-vien · /phu-huynh · /cuu-sinh-vien</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu &amp; tiêu chí chấp nhận</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">FR-AUD-01</td><td>Các trang này là <strong>thông tin chung</strong>, <span class="kw">KHÔNG</span> hiển thị dữ liệu cá nhân, không có bộ đếm cá nhân hoá; nội dung lấy từ <code>/pages/:path</code> (CMS) + biểu mẫu/quy chế dùng chung.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-AUD-02</td><td>Khối "Truy cập nhanh" trên các trang này là phím tắt liên khối (trỏ sang <code>/hoc-tap/*</code>, <code>/thu-vien/*</code>, <code>/dang-nhap</code>), không trùng danh sách section-nav.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-AUD-03</td><td>Nút "Đăng nhập eUni" / "My eUni …" dẫn tới đăng nhập rồi vào portal tương ứng theo vai trò.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-AUD-04</td><td>Trang cổng phụ huynh &amp; cựu sinh viên có "Truy cập nhanh" + mốc thời gian năm học + FAQ; cựu sinh viên có mục cập nhật hồ sơ (form).</td><td><span class="prio s">Nên có</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>4.11 Tiện ích · Tin tức · Sự kiện · Media · Liên hệ · Tìm kiếm <span class="tag">FR-UTIL</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu &amp; tiêu chí chấp nhận</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">FR-UTIL-01</td><td>Trang <code>/tien-ich</code>: có ô tìm ở hero + sidebar ("Dùng nhiều nhất" + SupportCard) + các Panel nhóm công cụ (TileGrid 3 cột); ô công cụ không có đích render dạng tĩnh (không phải link chết).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-UTIL-02</td><td>Trang Tin tức: danh sách lọc theo danh mục + phân trang; chi tiết <code>/tin-tuc/:slug</code> hiển thị nội dung bài, ngày, tác giả, ShareBar, tin liên quan, từ khoá.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-UTIL-03</td><td>Nội dung HTML của bài viết (từ CMS) <span class="kw">PHẢI</span> được làm sạch (sanitize) trước khi render (xem NFR-SEC-01).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-UTIL-04</td><td>Trang Sự kiện: danh sách (sắp diễn ra / đã diễn ra) + chi tiết <code>/su-kien/:slug</code> có thời gian, địa điểm, nút "Đăng ký" (form).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-UTIL-05</td><td>Trang Media: tab Ảnh / Video / Podcast; xem album ảnh mở <code>Lightbox</code> (điều hướng phím ← →, đóng bằng <kbd>Esc</kbd>); video/podcast có trang chi tiết.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-UTIL-06</td><td>Trang <code>/tim-kiem?q=</code>: kết quả gộp có bộ lọc loại nội dung (tin, trang, tài liệu, sự kiện, chương trình); phân trang; hiển thị từ khoá đang tìm và số kết quả.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-UTIL-07</td><td>Trang <code>/lien-he</code>: thẻ liên hệ + form (họ tên*, email*, SĐT, chủ đề, nội dung*) + bản đồ vị trí + bảng giờ làm việc + FAQ.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-UTIL-08</td><td>Trang <code>/lich-cong-tac</code>: lưới 7 ngày trong tuần + thanh chọn tuần (trước / sau); ngày không có lịch hiển thị "Không có lịch".</td><td><span class="prio s">Nên có</span></td></tr>
+          <tr><td class="rid">FR-UTIL-09</td><td>Trang <code>/webmail</code>: nút mở hộp thư ngoài (tab mới) + hướng dẫn cấu hình + FAQ.</td><td><span class="prio s">Nên có</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>4.12 Xác thực &amp; phiên <span class="tag">FR-AUTH</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu &amp; tiêu chí chấp nhận</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">FR-AUTH-01</td><td><code>AuthLayout</code>: nền gradient navy, thẻ trắng ở giữa, logo 60 năm ở đầu, không header/footer công khai. Thẻ <span class="kw">PHẢI</span> cuộn được khi cao hơn viewport (căn <code>flex-start</code> + <code>margin:auto 0</code>); ≤ 480px thu padding.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-AUTH-02</td><td>Đăng nhập SSO: trường tài khoản (username / email / mã số) + mật khẩu (có nút hiện/ẩn) + "Ghi nhớ đăng nhập"; submit gọi <code>POST /auth/login</code>.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-AUTH-03</td><td>Đăng nhập thành công: lưu token, điều hướng theo vai trò (SV → <code>/euni/sinh-vien</code>, GV → <code>/euni/giang-vien</code>, PH → <code>/euni/phu-huynh</code>, LĐ → <code>/euni/lanh-dao</code>, Admin → <code>/cms</code>); nếu có <code>?redirect=</code> hợp lệ thì ưu tiên.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-AUTH-04</td><td>Đăng nhập thất bại: thông báo trung tính "Tài khoản hoặc mật khẩu không đúng"; tài khoản bị khoá hiển thị thông báo riêng; không tiết lộ trường nào sai.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-AUTH-05</td><td>"Đăng nhập với Microsoft 365": khởi tạo luồng OAuth (redirect); màn callback xử lý mã đổi lấy token rồi điều hướng như FR-AUTH-03.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-AUTH-06</td><td>Cổng demo (chọn vai trò vào thẳng không cần mật khẩu) <span class="kw">PHẢI</span> chỉ hiển thị ở môi trường demo/staging và bị ẩn ở production (cờ cấu hình).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-AUTH-07</td><td>Quên mật khẩu: nhập email → <code>POST /auth/forgot-password</code>; luôn hiển thị thông báo trung tính "Nếu email tồn tại, hướng dẫn đã được gửi".</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-AUTH-08</td><td>Đổi mật khẩu: 3 trường + checklist yêu cầu độ mạnh cập nhật thời gian thực (≥ 8 ký tự, có hoa/thường, có số/ký tự đặc biệt); chặn submit tới khi đạt và mật khẩu mới khớp xác nhận.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-AUTH-09</td><td>Route guard: <code>/euni/*</code> và <code>/cms</code> yêu cầu đăng nhập và đúng vai trò. Chưa đăng nhập → <code>/dang-nhap?redirect=&lt;path&gt;</code>; sai vai trò → trang 403 "Không có quyền".</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-AUTH-10</td><td>Access token hết hạn: tự động gọi <code>POST /auth/refresh</code> một lần và thử lại request; refresh thất bại → đăng xuất, xoá state, về <code>/dang-nhap</code> kèm thông báo "Phiên đã hết hạn".</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-AUTH-11</td><td>"Thoát cổng" / Đăng xuất: gọi <code>POST /auth/logout</code>, xoá token và toàn bộ cache dữ liệu cá nhân, điều hướng về trang chủ công khai.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-AUTH-12</td><td>Tham số <code>redirect</code> <span class="kw">PHẢI</span> được kiểm tra chỉ cho phép đường dẫn nội bộ (bắt đầu bằng <code>/</code>, không phải <code>//</code> hay URL tuyệt đối) để chống open-redirect.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>4.13 Vỏ My eUni Portal &amp; CMS <span class="tag">FR-PORT</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu &amp; tiêu chí chấp nhận</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">FR-PORT-01</td><td><code>PortalLayout</code>: sidebar navy cuộn độc lập với danh sách chức năng theo <code>portals[key].items</code> (ẩn item có <code>hidden</code>); topbar có tên + vai trò người dùng, chuông thông báo, nút "Thoát cổng" ở góc phải.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-PORT-02</td><td>Chuông thông báo: hiển thị số chưa đọc từ <code>GET /me/notifications</code>; mở dropdown danh sách; bấm một mục gọi <code>PUT /me/notifications/:id/read</code> và điều hướng tới <code>notifTo</code>.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-PORT-03</td><td>Sidebar ≤ 1024px thu gọn (chỉ icon) hoặc ẩn sau nút hamburger; item đang chọn được đánh dấu.</td><td><span class="prio s">Nên có</span></td></tr>
+          <tr><td class="rid">FR-PORT-04</td><td>CMS dùng biến thể <code>PortalLayout</code> với accent riêng; menu theo <code>cmsConfig.items</code>.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>4.14 Biểu mẫu chung <span class="tag">FR-FORM</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu &amp; tiêu chí chấp nhận</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">FR-FORM-01</td><td>Kiểm tra phía client: bắt buộc, email hợp lệ, số điện thoại VN, độ dài tối thiểu/tối đa. Lỗi hiển thị ngay dưới trường khi rời trường (blur) và khi submit; trường lỗi có <code>aria-invalid</code> + <code>aria-describedby</code>.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-FORM-02</td><td>Khi submit: vô hiệu hoá nút + hiển thị trạng thái đang gửi; thành công → toast "Đã gửi …" + đặt lại form; lỗi mạng/server → giữ dữ liệu người dùng đã nhập + thông báo lỗi + cho gửi lại.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-FORM-03</td><td>Chống gửi trùng: chặn double-submit; có trường honeypot ẩn; hỗ trợ CAPTCHA khi backend yêu cầu.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-FORM-04</td><td>Áp dụng cho: Liên hệ, Tư vấn tuyển sinh, Cơ hội hợp tác, Đăng ký sự kiện, (portal) Ticket hỗ trợ, (cựu SV) Cập nhật hồ sơ.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>4.15 Trạng thái tải / lỗi / rỗng <span class="tag">FR-STATE</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu &amp; tiêu chí chấp nhận</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">FR-STATE-01</td><td>Trạng thái tải dùng skeleton theo hình dạng component (Panel, StatRow, bảng, thẻ), <span class="kw">KHÔNG</span> dùng spinner toàn trang; skeleton chỉ hiện nếu tải &gt; ~150ms.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-STATE-02</td><td>Một khối/panel tải lỗi hiển thị thông báo lỗi trong chính panel đó + nút "Thử lại"; các khối khác của trang vẫn hiển thị bình thường.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-STATE-03</td><td>Lỗi không khôi phục được (Error Boundary bắt): hiển thị trang lỗi thân thiện với nút "Tải lại" và link trang chủ; ghi log lỗi (xem NFR-REL-01).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-STATE-04</td><td>Danh sách rỗng (không có dữ liệu / sau lọc): thông báo cụ thể + hành động gợi ý (đặt lại bộ lọc / quay lại).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">FR-STATE-05</td><td>Thao tác thành công có phản hồi rõ ràng (toast / thay đổi trạng thái nút); nút nêu đúng hành động ("Gửi liên hệ" → toast "Đã gửi liên hệ").</td><td><span class="prio m">Bắt buộc</span></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- ================= 5 ================= -->
+    <section id="s5">
+      <div class="s-head"><span class="no">5</span><h2>Yêu cầu phi chức năng</h2></div>
+
+      <h3>5.1 Hiệu năng <span class="tag">NFR-PERF</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu &amp; ngưỡng nghiệm thu</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">NFR-PERF-01</td><td>Trên thiết bị tầm trung / mạng 4G, các trang chính đạt: LCP ≤ 2.5s, CLS ≤ 0.1, INP ≤ 200ms. Lighthouse (mobile) Performance ≥ 85, Accessibility ≥ 95, Best Practices ≥ 95, SEO ≥ 95.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-PERF-02</td><td>Chia mã theo route (<code>React.lazy</code> + <code>Suspense</code>). Gói JS khởi tạo (initial, gzip) ≤ 200 KB; mỗi route lazy ≤ 120 KB.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-PERF-03</td><td>Ảnh: <code>loading="lazy"</code> cho ảnh ngoài viewport; dùng <code>srcset</code>/<code>sizes</code> theo kích thước từ API; ưu tiên WebP/AVIF; luôn đặt <code>width</code>/<code>height</code> hoặc <code>aspect-ratio</code> để tránh dịch layout.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-PERF-04</td><td>Font: <code>preconnect</code> + <code>display=swap</code>; tối đa 2 họ font; fallback stack rõ ràng.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-PERF-05</td><td>Dữ liệu list/nội dung tĩnh cache theo <code>ETag</code>/<code>Cache-Control</code>; client dùng cache stale-while-revalidate; không gọi lại API khi quay lại bằng nút back trong vòng vài phút.</td><td><span class="prio s">Nên có</span></td></tr>
+          <tr><td class="rid">NFR-PERF-06</td><td>Trang danh sách dài (&gt; 50 mục hiển thị) dùng phân trang; không render toàn bộ một lúc.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>5.2 Khả năng tiếp cận <span class="tag">NFR-A11Y — mục tiêu WCAG 2.1 AA</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu &amp; tiêu chí chấp nhận</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">NFR-A11Y-01</td><td>Tỉ lệ tương phản text ≥ 4.5:1 (≥ 3:1 với text ≥ 24px hoặc ≥ 19px đậm) và với thành phần UI/viền ≥ 3:1.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-A11Y-02</td><td>Mọi chức năng thao tác được hoàn toàn bằng bàn phím; thứ tự tab hợp lý; không bẫy focus (trừ modal/drawer có bẫy chủ động + lối thoát).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-A11Y-03</td><td>Trạng thái <code>:focus-visible</code> rõ (viền ≥ 2px, tương phản ≥ 3:1) trên mọi phần tử tương tác.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-A11Y-04</td><td>Cấu trúc landmark (<code>header</code>/<code>nav</code>/<code>main</code>/<code>footer</code>); heading tuần tự không nhảy cấp; có skip-link "Bỏ qua tới nội dung chính" ở đầu trang.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-A11Y-05</td><td>Ảnh nội dung có <code>alt</code> mô tả; ảnh trang trí <code>alt=""</code>; nút chỉ có icon có <code>aria-label</code>; icon trang trí <code>aria-hidden</code>.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-A11Y-06</td><td>Tôn trọng <code>prefers-reduced-motion</code>: tắt marquee đối tác, tự chuyển slider, hiệu ứng thị sai; chỉ giữ chuyển động thiết yếu &lt; 200ms.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-A11Y-07</td><td>Form: <code>&lt;label&gt;</code> liên kết đúng, gộp nhóm bằng <code>fieldset/legend</code> khi cần; lỗi được thông báo qua <code>aria-live="polite"</code>.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-A11Y-08</td><td>Không truyền tải thông tin chỉ bằng màu (badge trạng thái có cả chữ; link trong đoạn văn có gạch chân hoặc dấu hiệu khác màu).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-A11Y-09</td><td>Bảng dữ liệu có <code>&lt;th scope&gt;</code>; bảng rộng bọc vùng cuộn có thể focus và có nhãn.</td><td><span class="prio s">Nên có</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>5.3 Tương thích &amp; responsive <span class="tag">NFR-COMPAT</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">NFR-COMPAT-01</td><td>Hỗ trợ đầy đủ 2 phiên bản mới nhất của Chrome, Edge, Firefox, Safari; Safari iOS ≥ 15; Chrome Android ≥ 100. Không hỗ trợ IE.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-COMPAT-02</td><td>Bố cục đúng từ 320px đến ≥ 1920px. Breakpoint: <span class="num">1280</span> (sidebar khối chuyển ngang), <span class="num">1080</span> (content-block 2 cột), <span class="num">960</span> (pg-body 1 cột, section-nav thành disclosure), <span class="num">720</span> (content-block 1 cột), <span class="num">560</span> (lưới 1 cột, footer 1 cột).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-COMPAT-03</td><td>Nội dung rộng (bảng, sơ đồ, khối mã) cuộn trong vùng riêng (<code>overflow-x:auto</code>); thân trang không bao giờ cuộn ngang.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-COMPAT-04</td><td>Vùng chạm tối thiểu 44×44px trên thiết bị cảm ứng.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-COMPAT-05</td><td>Hoạt động ở cả giao diện sáng và tối của hệ điều hành: v1.0 giữ một giao diện sáng nhưng nền/màu đặt tường minh; v1.1 bổ sung dark mode qua token.</td><td><span class="prio s">Nên có</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>5.4 Bảo mật <span class="tag">NFR-SEC</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">NFR-SEC-01</td><td>Mọi HTML từ CMS/nguồn ngoài <span class="kw">PHẢI</span> được sanitize (vd DOMPurify) trước khi render; cấm <code>dangerouslySetInnerHTML</code> với nội dung chưa lọc; không render URL <code>javascript:</code>.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-SEC-02</td><td>Áp dụng Content-Security-Policy: <code>default-src 'self'</code>; chỉ mở cho host font/CDN/ảnh cần thiết; không cho <code>unsafe-inline</code> script.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-SEC-03</td><td>Token: access token giữ trong bộ nhớ (in-memory); refresh token nên là cookie <code>HttpOnly; Secure; SameSite=Lax</code>. Nếu buộc lưu ở <code>localStorage</code> phải nêu rủi ro và giới hạn thời hạn ngắn. <span class="kw">KHÔNG</span> ghi token vào log/URL.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-SEC-04</td><td>Toàn bộ request qua HTTPS; không gọi endpoint HTTP; không nhúng secret/API key trong bundle.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-SEC-05</td><td>Đăng xuất xoá toàn bộ state cá nhân, cache dữ liệu người dùng và token.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-SEC-06</td><td>Chống open-redirect (FR-AUTH-12); chống clickjacking (đặt <code>X-Frame-Options</code>/<code>frame-ancestors</code> phía phục vụ tĩnh).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-SEC-07</td><td>Không hiển thị thông tin nhạy cảm trong thông báo lỗi; thông báo đăng nhập/khôi phục ở dạng trung tính.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>5.5 Bảo trì &amp; chất lượng mã <span class="tag">NFR-MAINT</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">NFR-MAINT-01</td><td>Cấu trúc thư mục: <code>pages/</code> (view theo route) · <code>components/ui/</code> (dùng chung) · <code>components/layout/</code> · <code>api/</code> (thay <code>data/</code>) · <code>routes/sitemap.js</code> · <code>lib/</code>. Một trang = một thư mục con.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-MAINT-02</td><td>Tách lớp API client; component UI <span class="kw">KHÔNG</span> gọi <code>fetch</code> trực tiếp — trang nạp dữ liệu rồi truyền props. Giữ hình dạng object trùng với mock hiện tại khi thay bằng API.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-MAINT-03</td><td>CSS: chỉ dùng token <code>--humg-*</code>, không hardcode màu; đặt tên theo BEM nhẹ (<code>.block__el</code>, <code>.is-active</code>); tránh selector đối chọi đè spacing.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-MAINT-04</td><td>Icon chỉ dùng tên có trong <code>Icon.jsx</code>; tên có gạch nối để trong ngoặc kép. <code>FilterBar.sortOptions</code> nhận mảng chuỗi.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-MAINT-05</td><td>Kiểm thử: unit test cho component dùng chung (Vitest + Testing Library), độ phủ ≥ 70%; e2e smoke (Playwright) cho: trang chủ, 1 hub, 1 trang danh sách + chi tiết, đăng nhập, 1 form.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-MAINT-06</td><td>ESLint + Prettier bắt buộc; CI chặn merge nếu fail build / lint / test. Không dùng thư viện UI component ngoài trừ khi được duyệt.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-MAINT-07</td><td>TypeScript được khuyến nghị cho lớp API và kiểu dữ liệu miền; nếu dùng JS thì có JSDoc kiểu cho props component dùng chung.</td><td><span class="prio s">Nên có</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>5.6 Độ tin cậy <span class="tag">NFR-REL</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">NFR-REL-01</td><td>Error Boundary ở cấp route và cấp khối; lỗi runtime không làm trắng toàn bộ ứng dụng; gửi lỗi tới dịch vụ giám sát (vd Sentry) kèm route + phiên bản build.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-REL-02</td><td>GET thất bại do mạng: tự thử lại 1 lần với backoff ngắn trước khi hiển thị lỗi.</td><td><span class="prio s">Nên có</span></td></tr>
+          <tr><td class="rid">NFR-REL-03</td><td>Mất kết nối: hiển thị dải thông báo "Mất kết nối mạng" và tự phục hồi khi có mạng lại.</td><td><span class="prio c">Tuỳ chọn</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>5.7 SEO &amp; khả năng khám phá <span class="tag">NFR-SEO</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">NFR-SEO-01</td><td>Mỗi route đặt <code>&lt;title&gt;</code>, meta description, canonical, OpenGraph &amp; Twitter card từ dữ liệu API; tiêu đề là tên trang cụ thể, không chung chung.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-SEO-02</td><td>Sinh <code>sitemap.xml</code> từ <code>publicRoutes</code> và <code>robots.txt</code>; khai báo <code>hreflang</code> vi/en.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-SEO-03</td><td>Áp dụng SSR hoặc prerender tĩnh cho các trang nội dung chính (trang chủ, giới thiệu, chương trình đào tạo, tin tức, sự kiện) để đảm bảo lập chỉ mục; các trang này trả HTML có nội dung khi tắt JS.</td><td><span class="prio s">Nên có</span></td></tr>
+          <tr><td class="rid">NFR-SEO-04</td><td>Đánh dấu dữ liệu có cấu trúc (JSON-LD): <code>EducationalOrganization</code> cho trang chủ, <code>Article</code> cho tin tức, <code>Event</code> cho sự kiện.</td><td><span class="prio s">Nên có</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>5.8 Quốc tế hoá &amp; nội dung <span class="tag">NFR-I18N</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">NFR-I18N-01</td><td>Toàn bộ chuỗi giao diện qua khoá i18n; <span class="kw">KHÔNG</span> hardcode tiếng Việt trong component. Gói ngôn ngữ tải từ <code>/i18n/:lang</code>.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-I18N-02</td><td>Định dạng theo <code>vi-VN</code>: ngày <code>dd/MM/yyyy</code>, giờ 24h, dấu chấm phân cách hàng nghìn; bản EN dùng định dạng phù hợp locale.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-I18N-03</td><td>Chữ trong ảnh phải hạn chế; nội dung song ngữ do API trả theo <code>lang</code>; thiếu bản dịch thì fallback về tiếng Việt và đánh dấu.</td><td><span class="prio s">Nên có</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>5.9 Pháp lý &amp; tuân thủ <span class="tag">NFR-LEGAL</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">NFR-LEGAL-01</td><td>Hiển thị đúng thông tin cơ quan chủ quản, địa chỉ, cơ quan cấp phép; footer có liên kết Chính sách bảo mật và Điều khoản sử dụng; đáp ứng yêu cầu về cổng thông tin điện tử của cơ quan nhà nước (tham chiếu Nghị định 42/2022/NĐ-CP).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-LEGAL-02</td><td>Biểu mẫu thu thập dữ liệu cá nhân có ghi chú mục đích sử dụng và liên kết chính sách; chỉ thu thập trường cần thiết.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-LEGAL-03</td><td>Nếu dùng cookie phân tích/không thiết yếu: có thông báo &amp; cơ chế đồng ý.</td><td><span class="prio s">Nên có</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>5.10 Khả năng dùng <span class="tag">NFR-USAB</span></h3>
+      <div class="tbl"><table class="rq">
+        <thead><tr><th>Mã</th><th>Yêu cầu</th><th>Ưu tiên</th></tr></thead>
+        <tbody>
+          <tr><td class="rid">NFR-USAB-01</td><td>Từ trang chủ tới bất kỳ nội dung công khai chính nào không quá 3 lần bấm.</td><td><span class="prio s">Nên có</span></td></tr>
+          <tr><td class="rid">NFR-USAB-02</td><td>Ngôn ngữ giao diện nhất quán, hướng người dùng ("Đăng nhập", "Gửi liên hệ"), thông báo lỗi nêu rõ nguyên nhân + cách khắc phục, không xin lỗi mơ hồ.</td><td><span class="prio m">Bắt buộc</span></td></tr>
+          <tr><td class="rid">NFR-USAB-03</td><td>Trạng thái đang xử lý luôn có phản hồi trong ≤ 100ms (đổi trạng thái nút / skeleton).</td><td><span class="prio m">Bắt buộc</span></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- ================= 6 ================= -->
+    <section id="s6">
+      <div class="s-head"><span class="no">6</span><h2>Ma trận truy vết yêu cầu</h2></div>
+      <p>Liên kết nhóm yêu cầu với trang/route, nhóm API (tài liệu đi kèm §8) và tài liệu wireframe. Chi tiết đến từng endpoint xem tài liệu đi kèm.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Nhóm FR</th><th>Route chính</th><th>Nhóm API</th><th>Wireframe</th></tr></thead>
+        <tbody>
+          <tr><td>FR-NAV</td><td><span class="mono">toàn site</span></td><td>8.1 Chung &amp; điều hướng</td><td>Header/Footer mẫu, sitemap_new</td></tr>
+          <tr><td>FR-HOME</td><td><span class="mono">/</span></td><td>8.2 Trang chủ &amp; nội dung động</td><td>PG-HOME, 00_Homepage_Reference</td></tr>
+          <tr><td>FR-ABOUT</td><td><span class="mono">/gioi-thieu/**</span></td><td>8.3 Giới thiệu / Về trường</td><td>PG-PUB-03, PG-PUB-04</td></tr>
+          <tr><td>FR-EDU</td><td><span class="mono">/hoc-tap/**</span></td><td>8.4 Tuyển sinh · 8.5 Đào tạo</td><td>PG-EDU-01→11</td></tr>
+          <tr><td>FR-RES</td><td><span class="mono">/nghien-cuu/**</span></td><td>8.6 Nghiên cứu</td><td>PG-PUB-08, PG-RES-01→05</td></tr>
+          <tr><td>FR-COO</td><td><span class="mono">/hop-tac/**</span></td><td>8.7 Hợp tác</td><td>PG-COO-01→05</td></tr>
+          <tr><td>FR-LIFE</td><td><span class="mono">/doi-song/**</span></td><td>8.8 Đời sống sinh viên</td><td>PG-LIFE-01→06</td></tr>
+          <tr><td>FR-LIB</td><td><span class="mono">/thu-vien/**, /thu-vien-so</span></td><td>8.9 Thư viện</td><td>PG-LIB-01, PG-PUB-11</td></tr>
+          <tr><td>FR-AUD</td><td><span class="mono">/sinh-vien, /giang-vien, /phu-huynh, /cuu-sinh-vien</span></td><td>8.2 (pages) + 8.5/8.9 dùng chung</td><td>PG-STU-01, PG-STAFF-01, PG-PAR-01</td></tr>
+          <tr><td>FR-UTIL</td><td><span class="mono">/tien-ich, /tin-tuc, /su-kien, /media, /lien-he, /tim-kiem, /lich-cong-tac, /webmail</span></td><td>8.1 · 8.2</td><td>PG-PUB-06/07, PG-HOME-02→06, PG-PUB-12</td></tr>
+          <tr><td>FR-AUTH</td><td><span class="mono">/dang-nhap, /dang-nhap-phu-huynh, /quen-mat-khau, /doi-mat-khau</span></td><td>8.10 Xác thực &amp; tài khoản</td><td>AUTH-01→04, 18_Authentication</td></tr>
+          <tr><td>FR-PORT</td><td><span class="mono">/euni/**, /cms</span></td><td>8.10 · 8.11 CMS</td><td>PG-PORT, PG-PORT-STAFF/PARENT/ADMIN, CMS-01→10</td></tr>
+          <tr><td>FR-FORM</td><td><span class="mono">các trang có form</span></td><td>8.1 /contact · 8.4 /admissions/advisory · 8.7 /cooperation/inquiry · 8.2 /events/:slug/register · 8.10 /support/tickets</td><td>PG-PUB-12, PG-EDU-01.1, PG-COO-01</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- ================= 7 ================= -->
+    <section id="s7">
+      <div class="s-head"><span class="no">7</span><h2>Phụ lục</h2></div>
+
+      <h3>7.1 Danh mục route công khai (rút gọn)</h3>
+      <p>Nguồn đầy đủ: <code>src/routes/sitemap.js</code> — <code>publicRoutes = collectFromNav() + standalonePublic + detailPublic</code>.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Khối</th><th>Route tiêu biểu</th></tr></thead>
+        <tbody>
+          <tr><td>Trang chủ &amp; chung</td><td><span class="mono">/ · /tin-tuc · /tin-tuc/:slug · /su-kien · /su-kien/:slug · /media · /media/{anh|video|podcast}/:slug · /tim-kiem · /lien-he · /sitemap · /tien-ich · /webmail · /lich-cong-tac · /thu-vien-so</span></td></tr>
+          <tr><td>Giới thiệu</td><td><span class="mono">/gioi-thieu · /thong-diep-hieu-truong · /lich-su · /tam-nhin-su-mang · /thanh-tuu · /con-so · /co-cau-to-chuc · /ban-giam-hieu · /giang-vien · /khoa[/:id] · /phong-ban[/:id] · /trung-tam-vien[/:id] · /don-vi-truc-thuoc[/:id] · /khoa/:id/bo-mon/:bmId[/giang-vien/:gvId]</span></td></tr>
+          <tr><td>Học tập</td><td><span class="mono">/hoc-tap · /tuyen-sinh(+10 trang con) · /chuong-trinh-dao-tao[/:id] · /chuan-dau-ra · /thong-tin-chung · /hoc-phi-hoc-bong · /bieu-mau · /lich-hoc · /tra-cuu-ket-qua · /huong-dan · /e-learning · /khao-sat</span></td></tr>
+          <tr><td>Nghiên cứu</td><td><span class="mono">/nghien-cuu · /de-tai[/:id] · /cong-bo[/:id] · /chuyen-gia[/:id] · /nhom-nghien-cuu[/:id] · /hoi-nghi-hoi-thao[/:slug] · /phong-thi-nghiem[/:id] · /chuyen-giao-cong-nghe · /nghien-cuu-sinh</span></td></tr>
+          <tr><td>Hợp tác</td><td><span class="mono">/hop-tac · /doi-tac[/:id] · /doi-tac-trong-nuoc · /doi-tac-quoc-te · /chuong-trinh-du-an[/:id] · /trao-doi · /sinh-vien-quoc-te · /giang-vien-quoc-te · /co-hoi-hop-tac</span></td></tr>
+          <tr><td>Đời sống</td><td><span class="mono">/doi-song · /campus-co-so-vat-chat · /hoat-dong-sinh-vien[/:slug] · /cau-lac-bo[/:id] · /doan-hoi · /the-thao-van-hoa · /ky-tuc-xa · /y-te · /dich-vu-campus · /ho-tro-sinh-vien · /viec-lam-khoi-nghiep[/:id]</span></td></tr>
+          <tr><td>Thư viện</td><td><span class="mono">/thu-vien · /tim-kiem · /bo-suu-tap · /tai-lieu-cua-toi · /csdl-khoa-hoc · /huong-dan · /tai-lieu/:id</span></td></tr>
+          <tr><td>Sinh viên / Giảng viên / Phụ huynh</td><td><span class="mono">/sinh-vien(+9 trang) · /giang-vien(+7 trang) · /phu-huynh · /cuu-sinh-vien</span></td></tr>
+          <tr><td>Xác thực</td><td><span class="mono">/dang-nhap · /dang-nhap-phu-huynh · /quen-mat-khau · /doi-mat-khau</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>7.2 Definition of Done — mỗi trang</h3>
+      <ul>
+        <li>Khớp wireframe/mockup về bố cục &amp; hệ thống thiết kế; dùng component dùng chung, không tạo biến thể trùng lặp.</li>
+        <li>Đủ 4 trạng thái: tải (skeleton) · có dữ liệu · rỗng · lỗi (có "Thử lại").</li>
+        <li>Responsive kiểm ở 360 / 768 / 1024 / 1440px, không cuộn ngang.</li>
+        <li>Bàn phím: tab đi hết các phần tử tương tác, focus rõ; modal/drawer bẫy &amp; trả focus.</li>
+        <li>Kiểm axe/Lighthouse: Accessibility ≥ 95, không lỗi nghiêm trọng; tương phản đạt.</li>
+        <li>Đặt <code>&lt;title&gt;</code> + meta; liên kết nội bộ dùng <code>&lt;Link&gt;</code>; link ngoài <code>rel="noopener"</code>.</li>
+        <li>Chuỗi qua i18n; ngày/số định dạng vi-VN.</li>
+        <li>Gọi đúng API theo tài liệu đi kèm §8; xử lý 401 → refresh/redirect, 403 → trang quyền, 404 → "không tìm thấy".</li>
+        <li>Không hardcode màu; không cảnh báo ESLint; có unit test cho logic không tầm thường.</li>
+        <li>Đã kiểm link chết trong phạm vi trang.</li>
+      </ul>
+
+      <h3>7.3 Trạng thái component tiêu biểu</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Component</th><th>Trạng thái phải xử lý</th></tr></thead>
+        <tbody>
+          <tr><td>FilterBar</td><td>mặc định · đang lọc · không kết quả · nút "Đặt lại" hiện khi có bộ lọc khác mặc định.</td></tr>
+          <tr><td>Pagination</td><td>trang đầu (ẩn/disable "trước") · trang cuối · một trang (ẩn) · đang tải trang mới.</td></tr>
+          <tr><td>TileGrid</td><td>ô có <code>to</code> (link, hover) · ô không <code>to</code> (tĩnh) · lưới 1 phần tử không kéo giãn.</td></tr>
+          <tr><td>Faq</td><td>đóng tất cả · mở một mục · chuyển mục (đóng mục cũ).</td></tr>
+          <tr><td>SectionNav</td><td>item active theo URL · trang không thuộc menu (không active) · thu gọn mobile hiển thị tên trang hiện tại.</td></tr>
+          <tr><td>Form</td><td>trống · đang nhập · lỗi từng trường · đang gửi · gửi thành công · lỗi server (giữ dữ liệu).</td></tr>
+          <tr><td>Chuông thông báo</td><td>0 chưa đọc · có chưa đọc (badge số) · danh sách rỗng · lỗi tải.</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="note"><b>Ghi chú:</b> tài liệu này đặc tả <em>yêu cầu</em>; chi tiết bố cục, props component và danh sách API xem tài liệu "Đặc tả Frontend HUMG Portal" đi kèm. Mọi thay đổi phạm vi phải cập nhật cả hai tài liệu và ma trận truy vết §6.</div>
+    </section>
+
+    <footer class="doc">
+      HUMG Digital Portal — Frontend SRS · v1.0 · 2026-09-01 · Trường Đại học Mỏ - Địa chất · Trạng thái: DRAFT chờ phê duyệt
+    </footer>
+  </main>
+</div>

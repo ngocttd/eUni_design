@@ -1,0 +1,748 @@
+<title>Đặc tả Frontend HUMG Portal</title>
+<meta name="description" content="Tài liệu thiết kế & bàn giao giao diện Cổng thông tin điện tử Trường Đại học Mỏ - Địa chất cho đội frontend, kèm danh sách API." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+
+<style>
+  :root {
+    --bg: #f5f7fb;
+    --surface: #ffffff;
+    --surface-2: #eceff6;
+    --ink: #16202f;
+    --ink-2: #55607a;
+    --ink-3: #8b95ab;
+    --line: #e2e6f0;
+    --line-strong: #cdd4e2;
+    --accent: #0a3d91;
+    --accent-soft: #e8eefb;
+    --warm: #d9660b;
+    --warm-soft: #fbeede;
+    --code-bg: #f0f2f8;
+    --m-get: #2f8f4e;
+    --m-post: #c9760b;
+    --m-put: #2563eb;
+    --m-del: #cf3b3b;
+    --font-ui: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    --shadow: 0 1px 2px rgba(10, 30, 70, 0.05), 0 12px 30px -18px rgba(10, 30, 70, 0.22);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d1522;
+      --surface: #131e30;
+      --surface-2: #1b2942;
+      --ink: #e7ebf3;
+      --ink-2: #9aa6ba;
+      --ink-3: #6b7790;
+      --line: #26344c;
+      --line-strong: #35476a;
+      --accent: #7aa7f2;
+      --accent-soft: #182742;
+      --warm: #f0913f;
+      --warm-soft: #33240f;
+      --code-bg: #1a2740;
+      --m-get: #4fb277;
+      --m-post: #e0912f;
+      --m-put: #5b8def;
+      --m-del: #e06565;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 16px 34px -20px rgba(0,0,0,0.55);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d1522;
+    --surface: #131e30;
+    --surface-2: #1b2942;
+    --ink: #e7ebf3;
+    --ink-2: #9aa6ba;
+    --ink-3: #6b7790;
+    --line: #26344c;
+    --line-strong: #35476a;
+    --accent: #7aa7f2;
+    --accent-soft: #182742;
+    --warm: #f0913f;
+    --warm-soft: #33240f;
+    --code-bg: #1a2740;
+    --m-get: #4fb277;
+    --m-post: #e0912f;
+    --m-put: #5b8def;
+    --m-del: #e06565;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 16px 34px -20px rgba(0,0,0,0.55);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    display: grid;
+    grid-template-columns: 246px minmax(0, 1fr);
+    gap: 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 32px 96px;
+  }
+
+  /* ---------- TOC ---------- */
+  .toc { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow-y: auto; }
+  .toc__brand { font-weight: 700; font-size: 0.95rem; letter-spacing: -0.01em; }
+  .toc__brand span { color: var(--accent); }
+  .toc__meta { font-size: 0.72rem; color: var(--ink-3); margin: 4px 0 18px; font-family: var(--font-mono); }
+  .toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
+  .toc a {
+    display: flex; gap: 9px; padding: 7px 8px; border-radius: 6px;
+    color: var(--ink-2); text-decoration: none; font-size: 0.82rem; line-height: 1.35;
+  }
+  .toc a:hover { background: var(--surface-2); color: var(--ink); }
+  .toc a b { font-family: var(--font-mono); font-weight: 500; color: var(--accent); flex-shrink: 0; }
+  .toc details { margin-top: 14px; }
+  .toc summary { cursor: pointer; font-size: 0.78rem; color: var(--ink-3); }
+
+  /* ---------- Main ---------- */
+  main { min-width: 0; }
+  .lede h1 {
+    font-size: clamp(1.9rem, 1.2rem + 2.6vw, 2.7rem);
+    line-height: 1.12; margin: 0 0 12px; letter-spacing: -0.02em; text-wrap: balance;
+  }
+  .lede p { font-size: 1.02rem; color: var(--ink-2); margin: 0 0 20px; max-width: 62ch; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .chip {
+    font-size: 0.76rem; border: 1px solid var(--line-strong); border-radius: 999px;
+    padding: 4px 11px; color: var(--ink-2); white-space: nowrap;
+  }
+  .chip b { color: var(--ink); font-weight: 600; }
+  .stamp { font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-3); margin-top: 18px; }
+
+  section { margin-top: 64px; scroll-margin-top: 24px; }
+  .s-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; }
+  .s-head .no { font-family: var(--font-mono); font-size: 0.95rem; color: var(--accent); font-weight: 600; }
+  .s-head h2 { font-size: 1.5rem; margin: 0; letter-spacing: -0.01em; }
+  section > p { max-width: 64ch; color: var(--ink-2); }
+  section > p strong, li strong { color: var(--ink); font-weight: 600; }
+  h3 { font-size: 1.06rem; margin: 34px 0 10px; letter-spacing: -0.005em; }
+  h3 .tag { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-3); font-weight: 400; margin-left: 8px; }
+  h4 { font-size: 0.9rem; margin: 22px 0 8px; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  ul, ol.list { padding-left: 20px; }
+  li { margin: 4px 0; }
+  li::marker { color: var(--ink-3); }
+
+  code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+  p code, li code, td code {
+    background: var(--code-bg); padding: 1px 5px; border-radius: 4px;
+    color: var(--ink); border: 1px solid var(--line);
+  }
+
+  /* ---------- Tables ---------- */
+  .tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin: 14px 0 6px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.83rem; }
+  thead th {
+    text-align: left; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--ink-3); font-weight: 600; padding: 10px 12px; background: var(--surface-2);
+    border-bottom: 1px solid var(--line-strong); white-space: nowrap;
+  }
+  tbody td { padding: 10px 12px; border-top: 1px solid var(--line); vertical-align: top; }
+  tbody tr:first-child td { border-top: 0; }
+  td .path { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink); white-space: nowrap; }
+  td b { font-weight: 600; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  .m {
+    display: inline-block; font-family: var(--font-mono); font-weight: 600; font-size: 0.68rem;
+    line-height: 1; padding: 4px 6px; border-radius: 4px; color: #fff; letter-spacing: 0.02em;
+  }
+  .m.get { background: var(--m-get); }
+  .m.post { background: var(--m-post); }
+  .m.put { background: var(--m-put); }
+  .m.del { background: var(--m-del); }
+  .auth { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-2); white-space: nowrap; }
+  .auth.pub { color: var(--ink-3); }
+
+  .swatch { display: inline-block; width: 13px; height: 13px; border-radius: 3px; border: 1px solid rgba(0,0,0,0.15); vertical-align: -2px; margin-right: 7px; }
+
+  /* ---------- Callouts ---------- */
+  .note, .warn {
+    border-left: 3px solid var(--accent); background: var(--surface);
+    padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: 0.9rem;
+  }
+  .warn { border-left-color: var(--warm); }
+  .note b, .warn b { color: var(--ink); }
+
+  a.ref { color: var(--accent); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); }
+  a.ref:hover { border-bottom-color: var(--accent); }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+  footer.doc {
+    margin-top: 80px; padding-top: 20px; border-top: 1px solid var(--line);
+    font-size: 0.8rem; color: var(--ink-3); font-family: var(--font-mono);
+  }
+
+  @media (max-width: 900px) {
+    .wrap { grid-template-columns: 1fr; gap: 0; padding: 28px 20px 72px; }
+    .toc { position: static; max-height: none; margin-bottom: 8px; }
+    .toc ol { display: none; }
+    .toc details[open] ol { display: flex; }
+    .toc details ol { display: none; }
+    section { margin-top: 48px; }
+  }
+</style>
+
+<div class="wrap">
+  <nav class="toc" aria-label="Mục lục">
+    <div class="toc__brand"><span>HUMG</span> Digital Portal</div>
+    <div class="toc__meta">Frontend spec · v1 · 2026-09-01</div>
+    <details open>
+      <summary>Mục lục</summary>
+      <ol>
+        <li><a href="#s1"><b>§1</b> Tổng quan &amp; kiến trúc</a></li>
+        <li><a href="#s2"><b>§2</b> Hệ thống thiết kế</a></li>
+        <li><a href="#s3"><b>§3</b> Khung trang &amp; layout</a></li>
+        <li><a href="#s4"><b>§4</b> Thư viện component</a></li>
+        <li><a href="#s5"><b>§5</b> Đặc tả trang công khai</a></li>
+        <li><a href="#s6"><b>§6</b> My eUni Portal &amp; CMS</a></li>
+        <li><a href="#s7"><b>§7</b> Responsive &amp; tiếp cận</a></li>
+        <li><a href="#s8"><b>§8</b> Danh sách API</a></li>
+        <li><a href="#s9"><b>§9</b> Bàn giao &amp; quy ước</a></li>
+      </ol>
+    </details>
+  </nav>
+
+  <main>
+    <div class="lede">
+      <h1>Đặc tả Frontend — Cổng thông tin điện tử HUMG</h1>
+      <p>Tài liệu bàn giao giao diện phần <strong>công khai</strong> của Cổng thông tin Trường Đại học Mỏ - Địa chất: hệ thống thiết kế, khung trang, thư viện component dùng chung, đặc tả từng khối trang và danh sách API cần xây dựng ở backend.</p>
+      <div class="facts">
+        <span class="chip"><b>React</b> 18</span>
+        <span class="chip"><b>Vite</b> 5</span>
+        <span class="chip"><b>react-router-dom</b> 6.26</span>
+        <span class="chip">CSS thuần + biến CSS</span>
+        <span class="chip">i18n: <b>VI</b> / EN</span>
+      </div>
+      <div class="facts">
+        <span class="chip">11 khối công khai</span>
+        <span class="chip">~90 route công khai</span>
+        <span class="chip">~20 component dùng chung</span>
+        <span class="chip">4 My eUni Portal + 1 CMS</span>
+        <span class="chip">~130 endpoint API</span>
+      </div>
+      <p class="stamp">Nguồn tham chiếu: HUMG_Mockup_All_Designed/, wireframe_humg/, sitemap_new.png. Dữ liệu hiện là mock trong <code>src/data/*.js</code>, cần thay bằng API thật.</p>
+    </div>
+
+    <!-- ============ §1 ============ -->
+    <section id="s1">
+      <div class="s-head"><span class="no">§1</span><h2>Tổng quan &amp; kiến trúc</h2></div>
+      <p>Cổng gồm hai lớp: <strong>website công khai</strong> (không đăng nhập) và <strong>My eUni Portal</strong> (cá nhân hoá theo vai trò) cùng <strong>CMS</strong>. Tài liệu này tập trung vào lớp công khai; portal &amp; CMS được tóm tắt ở §6.</p>
+
+      <h3>Cây định tuyến</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Nhóm route</th><th>Tiền tố</th><th>Layout</th><th>Nội dung</th></tr></thead>
+        <tbody>
+          <tr><td><b>Trang chủ</b></td><td><span class="path">/</span></td><td><code>AppLayout</code> (Header + Footer công khai)</td><td>Hero, truy cập nhanh, cổng theo đối tượng, thế mạnh, tin – sự kiện – media, đối tác.</td></tr>
+          <tr><td><b>11 khối công khai</b></td><td><span class="path">/gioi-thieu</span>, <span class="path">/hoc-tap</span>, <span class="path">/nghien-cuu</span>, <span class="path">/hop-tac</span>, <span class="path">/doi-song</span>, <span class="path">/thu-vien</span>, <span class="path">/sinh-vien</span>, <span class="path">/giang-vien</span>, <span class="path">/phu-huynh</span>, <span class="path">/cuu-sinh-vien</span>, <span class="path">/tien-ich</span></td><td><code>AppLayout</code> + <code>PageShell</code></td><td>Mỗi khối: 1 trang hub + nhiều trang chi tiết, dùng chung <code>PageShell</code> (hero + section-nav trái + sidebar phải).</td></tr>
+          <tr><td><b>Nội dung động</b></td><td><span class="path">/tin-tuc</span>, <span class="path">/su-kien</span>, <span class="path">/media</span>, <span class="path">/tim-kiem</span>, <span class="path">/lien-he</span></td><td><code>AppLayout</code></td><td>Danh sách + chi tiết bài viết / sự kiện / album; tìm kiếm toàn cục; form liên hệ.</td></tr>
+          <tr><td><b>Xác thực</b></td><td><span class="path">/dang-nhap</span>, <span class="path">/dang-nhap-phu-huynh</span>, <span class="path">/quen-mat-khau</span>, <span class="path">/doi-mat-khau</span></td><td><code>AuthLayout</code> (không header/footer)</td><td>Đăng nhập SSO, đăng nhập phụ huynh, quên / đổi mật khẩu.</td></tr>
+          <tr><td><b>My eUni Portal</b></td><td><span class="path">/euni/sinh-vien</span>, <span class="path">/euni/giang-vien</span>, <span class="path">/euni/phu-huynh</span>, <span class="path">/euni/lanh-dao</span></td><td><code>PortalLayout</code> (sidebar navy + topbar)</td><td>Dashboard cá nhân hoá; cần đăng nhập &amp; đúng vai trò.</td></tr>
+          <tr><td><b>CMS</b></td><td><span class="path">/cms</span></td><td><code>PortalLayout</code> biến thể CMS</td><td>Quản trị nội dung, media, người dùng, cấu hình.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Nguyên tắc nội dung khối công khai</h3>
+      <ul>
+        <li>Trang <strong>hub / tổng quan</strong> là dashboard: số liệu tổng hợp + nội dung nổi bật (chương trình, đối tác, đề tài, sự kiện cụ thể) + tin tức. <strong>Không</strong> lặp lại danh sách của menu trái dưới dạng lưới ô.</li>
+        <li>Các trang khối "Sinh viên" và "Giảng viên / Cán bộ" công khai là <strong>trang thông tin chung</strong>, không phải dashboard cá nhân — dữ liệu cá nhân nằm sau đăng nhập ở My eUni Portal.</li>
+        <li>Khi có wireframe mới cho một khối: chỉ đổi bố cục / style component, <strong>giữ nguyên</strong> mọi route, luồng và dữ liệu đã có.</li>
+      </ul>
+    </section>
+
+    <!-- ============ §2 ============ -->
+    <section id="s2">
+      <div class="s-head"><span class="no">§2</span><h2>Hệ thống thiết kế</h2></div>
+      <p>Toàn bộ token nằm ở <code>:root</code> trong <code>src/index.css</code>. Tất cả khối công khai dùng <strong>một tông navy chung</strong> — không tô màu riêng từng khối. Cam chỉ dùng làm điểm nhấn nhỏ (kỷ niệm 60 năm, nút phụ, nhãn "Mới").</p>
+
+      <h3>Màu</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Token</th><th>Sáng</th><th>Vai trò</th></tr></thead>
+        <tbody>
+          <tr><td><code>--humg-primary</code></td><td><span class="swatch" style="background:#0a3d91"></span>#0a3d91</td><td>Navy chủ đạo: tiêu đề, nút chính, nav đang chọn, phần lớn icon, footer, <code>--sect</code>.</td></tr>
+          <tr><td><code>--humg-primary-dark</code></td><td><span class="swatch" style="background:#082f6f"></span>#082f6f</td><td>Hover nút chính, gradient sidebar portal.</td></tr>
+          <tr><td><code>--humg-secondary</code></td><td><span class="swatch" style="background:#1976d2"></span>#1976d2</td><td>Xanh phụ: link ("Xem chi tiết/tất cả"), viền hover, thanh tiến độ, một số icon.</td></tr>
+          <tr><td><code>--humg-accent</code> / <code>-dark</code></td><td><span class="swatch" style="background:#ff9800"></span>#ff9800 / #f57c00</td><td>Cam nhấn: thương hiệu "60 năm", nút phụ hiếm, nhãn "Mới", gạch chân tiêu đề.</td></tr>
+          <tr><td><code>--humg-success</code></td><td><span class="swatch" style="background:#2e7d32"></span>#2e7d32</td><td>Trạng thái tốt: "Đang thực hiện", học bổng, hoàn tất.</td></tr>
+          <tr><td><code>--humg-warning</code></td><td><span class="swatch" style="background:#f59e0b"></span>#f59e0b</td><td>Chờ xử lý, "Cấp nhà nước".</td></tr>
+          <tr><td><code>--humg-danger</code></td><td><span class="swatch" style="background:#e53935"></span>#e53935</td><td>Icon file PDF, mức ưu tiên "Cao", lỗi.</td></tr>
+          <tr><td><code>--humg-bg</code> / <code>-surface</code> / <code>-surface-alt</code></td><td>#f8fafc / #ffffff / #f1f5f9</td><td>Nền trang / nền thẻ / nền phụ (đầu bảng, filter bar).</td></tr>
+          <tr><td><code>--humg-text</code> / <code>-secondary</code></td><td>#1a1a1a / #64748b</td><td>Chữ chính / chữ phụ.</td></tr>
+          <tr><td><code>--humg-border</code> / <code>--humg-hover</code></td><td>#e2e8f0 / #e3f2fd</td><td>Viền hairline / nền hover xanh nhạt.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="warn"><b>Dark mode:</b> chưa triển khai. Nếu làm, khai báo lại token ở <code>@media (prefers-color-scheme: dark)</code> + <code>[data-theme]</code>, không sửa trực tiếp trong component.</div>
+
+      <h3>Hình khối &amp; chiều</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Token</th><th>Giá trị</th><th>Dùng cho</th></tr></thead>
+        <tbody>
+          <tr><td><code>--humg-radius-card</code> / <code>-btn</code></td><td>12px / 8px</td><td>Bo góc thẻ / nút.</td></tr>
+          <tr><td><code>--humg-shadow-sm</code> / <code>-md</code></td><td>bóng navy rất nhẹ</td><td>Thẻ tĩnh / thẻ nổi (dropdown, modal).</td></tr>
+          <tr><td><code>--humg-container</code> / <code>-wide</code></td><td>1200px / 1560px</td><td>Bề rộng nội dung chuẩn / bề rộng header &amp; trang chủ.</td></tr>
+          <tr><td><code>--humg-gutter</code></td><td>24px</td><td>Padding ngang wrapper.</td></tr>
+          <tr><td><code>--humg-header-h</code> / <code>--humg-utilitybar-h</code></td><td>72px / 36px</td><td>Chiều cao header chính / thanh tiện ích trên cùng.</td></tr>
+          <tr><td><code>--humg-transition</code></td><td>0.2s ease</td><td>Chuyển động mặc định.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Chữ</h3>
+      <ul>
+        <li>Font hệ thống (system-ui). Cỡ gốc <strong>15–16px</strong>, line-height 1.5–1.75.</li>
+        <li>Tiêu đề trang <code>h1</code> ≈ 25px navy; tiêu đề panel ≈ 15px navy IN HOA nhẹ (letter-spacing 0.02em); nhãn eyebrow ≈ 10.5–12px IN HOA, letter-spacing 0.07–0.09em.</li>
+        <li>Số liệu lớn (StatRow): 23–24px, font-weight 800, navy; nhãn 12px, chữ phụ.</li>
+        <li>Số trong bảng &amp; cột căn phải: <code>font-variant-numeric: tabular-nums</code>.</li>
+      </ul>
+
+      <h3>Icon</h3>
+      <p>Bộ icon nội tuyến <code>src/lib/Icon.jsx</code> — stroke ~1.75, 24×24, <code>currentColor</code>, không phụ thuộc thư viện ngoài. Dùng: <code>&lt;Icon name="calendar" size={18} /&gt;</code>. Style mockup: icon line navy, đặt trong "chip" nền xanh nhạt bo tròn/bo góc (<code>background:#eef3fb; color: var(--humg-primary)</code>). Tên hợp lệ gồm: <span class="mono">home building book flask handshake heart library user users graduation calendar clock file download external eye search shield target rocket globe layers grid newspaper phone mail play headphones award briefcase check menu lock image compass microsoft facebook youtube linkedin zalo</span> và các tên có dấu gạch nối phải để trong ngoặc kép: <span class="mono">"arrow-right" "arrow-left" "chevron-down" "chevron-right" "chevron-left" "map-pin"</span>.</p>
+    </section>
+
+    <!-- ============ §3 ============ -->
+    <section id="s3">
+      <div class="s-head"><span class="no">§3</span><h2>Khung trang &amp; layout</h2></div>
+
+      <h3>Header công khai <span class="tag">components/layout/Header</span></h3>
+      <ul>
+        <li>Thanh tiện ích trên cùng (36px): liên kết nhanh + chuyển ngữ VI/EN + nút "Đăng nhập eUni".</li>
+        <li>Hàng chính (72px): logo 60 năm + wordmark; <strong>5 menu có dropdown</strong> (Giới thiệu HUMG, Học tập, Nghiên cứu, Hợp tác, Đời sống) + <strong>3 link nhanh</strong> (Thư viện, Sinh viên, Giảng viên / Cán bộ) + tìm kiếm + nút "Đăng nhập eUni".</li>
+        <li>Mobile: gộp thành drawer trượt, đầy đủ 11 khối + Trang chủ + Phụ huynh + Lãnh đạo.</li>
+        <li>Nguồn menu: <code>src/routes/sitemap.js</code> → <code>headerNav</code> (suy ra từ <code>mainNav</code>).</li>
+      </ul>
+
+      <h3>Footer <span class="tag">components/layout/Footer</span></h3>
+      <p>Nền navy, lưới 4 cột <code>1.7fr 1fr 1fr 1.15fr</code>, max-width 1400px, gap 40×56. Cột 1: logo + địa chỉ + điện thoại + email. Cột 2–4: <code>footerColumns</code> (Liên kết nhanh, Chính sách &amp; quy định, Kết nối). Hàng dưới: bản quyền + link app + QR. Responsive: 3 cột (≤1080), 2 cột (≤720), 1 cột (≤480).</p>
+
+      <h3>PageShell — khung trang khối công khai <span class="tag">components/ui/page.jsx + page.css</span></h3>
+      <p>Mọi trang khối công khai render qua <code>PageShell</code>. Cấu trúc:</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Vùng</th><th>Class</th><th>Mô tả</th></tr></thead>
+        <tbody>
+          <tr><td>Hero</td><td><code>.pg-hero</code></td><td>Dải nhạt tông navy, họa tiết chấm bi mờ; chứa eyebrow (pill), <code>h1</code>, lead, breadcrumb, và slot <code>hero</code> tuỳ trang (ô tìm kiếm, thanh chọn tuần, MetaBar…).</td></tr>
+          <tr><td>Thân</td><td><code>.pg-body</code></td><td>3 biến thể: mặc định (1 cột, main ≤1000px); <code>--aside</code> (main + sidebar 320px); <code>--nav</code> (section-nav 272px + main); <code>--nav --aside</code> (3 cột 272 / 1fr / 304).</td></tr>
+          <tr><td>Menu khối</td><td><code>.pg-nav</code></td><td>Sticky top 88px, thẻ trắng; item có icon + nhãn; item đang chọn nền navy chữ trắng. ≤960px thu thành thanh bấm mở/đóng.</td></tr>
+          <tr><td>Nội dung</td><td><code>.pg-main</code></td><td>Cột <code>flex</code> dọc, gap 20px, xếp các <code>Panel</code>.</td></tr>
+          <tr><td>Sidebar</td><td><code>.pg-aside</code></td><td>Sticky top 88px; xếp <code>LinkList</code> / <code>SupportCard</code> / <code>Panel</code> phụ. ≤1280px chuyển ngang, ≤960px về static.</td></tr>
+        </tbody>
+      </table></div>
+      <p>Props: <code>eyebrow</code>, <code>title</code>, <code>lead</code>, <code>crumbs[]</code>, <code>hero</code>, <code>sectionNav</code>, <code>sidebar</code>, <code>children</code>, <code>variant</code>. (<code>accent</code> còn nhận nhưng đã bỏ tô màu riêng.)</p>
+
+      <h3>Trang chủ — khung riêng <span class="tag">pages/home/HomePage.jsx</span></h3>
+      <p>Dùng <code>.home-wide</code> (max-width 1560px). Thứ tự khối: <strong>Hero</strong> (ảnh campus phủ toàn chiều rộng + lớp phủ sáng dần từ trái, chữ + 2 nút bên trái, slider dots) → <strong>QuickBar</strong> (thẻ trắng nổi, đè lên đáy banner <code>margin-top:-42px</code>, 8 lối tắt icon-trên nhãn-dưới trên 1 hàng) → <strong>Dành cho bạn</strong> (6 thẻ đối tượng: icon tròn + tên có màu + mô tả + ảnh 16:9 + nút mũi tên tròn) → <strong>Thế mạnh HUMG</strong> (nền navy, 4 mục) → <strong>Tin tức · Sự kiện · Media</strong> (3 cột) → <strong>Đối tác</strong> (dải logo cuộn).</p>
+    </section>
+
+    <!-- ============ §4 ============ -->
+    <section id="s4">
+      <div class="s-head"><span class="no">§4</span><h2>Thư viện component dùng chung</h2></div>
+      <p>Tất cả ở <code>src/components/ui/page.jsx</code> (+ <code>page.css</code>). Thuần trình bày, nhận data qua props. Không gọi API bên trong.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Component</th><th>Props chính</th><th>Hành vi &amp; responsive</th></tr></thead>
+        <tbody>
+          <tr><td><b>PageShell</b></td><td><code>eyebrow, title, lead, crumbs[], hero, sectionNav, sidebar, children, variant</code></td><td>Xem §3. Tự chọn biến thể <code>.pg-body</code> theo có/không <code>sectionNav</code> &amp; <code>sidebar</code>.</td></tr>
+          <tr><td><b>SectionNav</b></td><td><code>title, items[]{label,to}</code> hoặc <code>groups[]{title,items[]}</code></td><td>Menu khối. Tự đánh dấu item khớp URL (khớp sâu cho path &gt; 2 cấp). ≤960px: nút disclosure hiện nhãn trang hiện tại.</td></tr>
+          <tr><td><b>Panel</b></td><td><code>title, icon, action, flush, id, children</code></td><td>Thẻ trắng viền hairline, <code>border-top: 3px navy</code>. Đầu panel: chip icon + tiêu đề IN HOA + slot <code>action</code> (thường link "Xem tất cả"). <code>flush</code> = bỏ padding thân (cho bảng / tab).</td></tr>
+          <tr><td><b>TileGrid</b></td><td><code>items[]{icon,title,desc,to}, cols=3</code></td><td>Lưới ô. Ô <strong>có <code>to</code></strong> → <code>&lt;Link&gt;</code> (hover nâng); ô <strong>không <code>to</code></strong> → <code>&lt;div .ui-tile--static&gt;</code> tĩnh. ≤960: 2 cột, ≤560: 1 cột.</td></tr>
+          <tr><td><b>DataTable</b></td><td><code>columns[], rows[][]</code></td><td>Bảng cơ bản, <code>overflow-x:auto</code>, đầu bảng nền phụ, hover đổi nền. Ô có thể là chuỗi hoặc JSX (link, badge).</td></tr>
+          <tr><td><b>StatRow</b></td><td><code>items[]{value,label}</code></td><td>Bảng số liệu dạng lưới gọn: <code>auto-fit minmax(128px,1fr)</code>, viền hairline 1px giữa các ô, số 23px/800 navy.</td></tr>
+          <tr><td><b>Chips</b></td><td><code>options[]{key,label}, value, onChange</code></td><td>Bộ lọc/tab dạng pill; pill active nền navy chữ trắng.</td></tr>
+          <tr><td><b>FilterBar</b></td><td><code>search, onSearch, searchPlaceholder, selects[]{label,value,onChange,options[]}, sort, onSort, sortOptions[], count, total, onReset</code></td><td>Thanh lọc: ô tìm + nhiều <code>select</code> + sắp xếp; chân hiển thị "count / total" + nút "Đặt lại". <code>sortOptions</code> là <strong>mảng chuỗi</strong>. ≤640: select xuống 1 cột.</td></tr>
+          <tr><td><b>Pagination</b></td><td><code>page, total</code></td><td>Chỉ hiển thị (chưa nối handler); nút chevron trái/phải + số trang.</td></tr>
+          <tr><td><b>LinkList</b></td><td><code>title, items[]{label,to}</code></td><td>Thẻ danh sách link cho sidebar; icon chevron, hover nền xanh nhạt.</td></tr>
+          <tr><td><b>SupportCard</b></td><td><code>title, lead, phone, email, cta{label,to}</code></td><td>Thẻ liên hệ nền gradient navy, chữ trắng, nút trắng.</td></tr>
+          <tr><td><b>MetaBar</b></td><td><code>items[]{icon,text}</code></td><td>Hàng meta ngang (icon + text), wrap, chữ phụ; đặt trong slot <code>hero</code>.</td></tr>
+          <tr><td><b>NewsMini</b></td><td><code>items[]{date,title,to}</code></td><td>Danh sách tin gọn: ngày nhỏ + tiêu đề link.</td></tr>
+          <tr><td><b>DocList</b></td><td><code>items[]{name,meta}</code></td><td>Danh sách tài liệu tải về: icon PDF đỏ + tên + meta ("PDF · 1.2 MB") + nút tải.</td></tr>
+          <tr><td><b>StepList</b></td><td><code>items[]{title,text}</code></td><td>Quy trình đánh số; số nằm trong vòng tròn navy (chữ trắng).</td></tr>
+          <tr><td><b>Faq</b></td><td><code>items[]{q,a}</code></td><td>Accordion; một mục mở tại một thời điểm; mũi tên xoay.</td></tr>
+          <tr><td><b>HeroSearch</b></td><td><code>placeholder, button</code></td><td>Ô tìm bo tròn cho slot <code>hero</code>. (Submit đang chặn mặc định — cần nối route <code>/tim-kiem</code>.)</td></tr>
+          <tr><td><b>MediaCard</b></td><td><code>kind, to, title, meta, badge</code></td><td>Thẻ media: ảnh 16:9 placeholder + nút play (kind=video) + badge góc + tiêu đề.</td></tr>
+          <tr><td><b>ArticleRow</b> / <b>ShareBar</b> / <b>Lightbox</b></td><td>—</td><td>Hàng bài viết (thumb 240px + tóm tắt), thanh chia sẻ, xem ảnh phóng to (dùng ở trang tin tức / media).</td></tr>
+          <tr><td><b>Brand</b></td><td><code>compact, subtitle, anniversary, to</code></td><td>Logo 60 năm (<code>/brand/logo-60-nam.png</code>) + wordmark; có <code>CrestFallback</code> vẽ mark "60".</td></tr>
+        </tbody>
+      </table></div>
+      <div class="note"><b>Placeholder ảnh:</b> phần tử <code>&lt;span class="humg-ph" data-ratio="16-9"&gt;</code> (các tỉ lệ: <code>16-9 4-3 3-2 1-1 3-4</code>) — thay bằng <code>&lt;img&gt;</code> thật khi có media từ API/CMS.</div>
+    </section>
+
+    <!-- ============ §5 ============ -->
+    <section id="s5">
+      <div class="s-head"><span class="no">§5</span><h2>Đặc tả trang công khai</h2></div>
+      <p>Mỗi khối = <strong>một section-nav</strong> + <strong>một trang hub</strong> + các trang chi tiết. Trang chi tiết đều dùng <code>PageShell</code> với biến thể <code>--nav --aside</code> (menu khối trái, nội dung giữa, sidebar phải).</p>
+
+      <h3>Trang chủ <span class="tag">/</span></h3>
+      <ul>
+        <li><b>Hero:</b> ảnh <code>/brand/hero-campus.jpg</code> phủ toàn chiều rộng + lớp phủ sáng trái; nội dung: "60 NĂM", tiêu đề slide, "1966 – 2026", motto, chips, 2 nút, slider dots. Data: <code>heroSlides</code>, <code>heroChips</code>.</li>
+        <li><b>QuickBar:</b> 8 lối tắt (<code>quickLinks</code>) — Lịch công tác, Thư viện số, E-learning, Tra cứu tuyển sinh, Biểu mẫu, Webmail, Tiện ích khác, Liên hệ.</li>
+        <li><b>Dành cho bạn:</b> 6 thẻ đối tượng (<code>audiences</code>) — Thí sinh, Sinh viên, Phụ huynh, Cựu sinh viên, Giảng viên, Đối tác; mỗi thẻ màu riêng + ảnh.</li>
+        <li><b>Thế mạnh:</b> <code>strengths</code> (4 mục). <b>Tin – Sự kiện – Media:</b> <code>featuredNews</code>, <code>newsList</code>, <code>upcomingEvents</code>, <code>mediaTabs</code>. <b>Đối tác:</b> <code>partners</code>.</li>
+      </ul>
+
+      <h3>Giới thiệu HUMG <span class="tag">/gioi-thieu</span></h3>
+      <p><b>Menu 7 mục</b> (<code>aboutNav</code>): Tổng quan · Thông điệp Hiệu trưởng · Lịch sử phát triển · Sứ mạng – Tầm nhìn – Giá trị · Thành tựu &amp; con số nổi bật · Cơ cấu tổ chức · Đội ngũ cán bộ, giảng viên.</p>
+      <ul>
+        <li><b>Tổng quan:</b> giới thiệu chung + <code>StatRow</code> (kèm link "Xem đầy đủ" sang trang con số) + giá trị theo đuổi.</li>
+        <li><b>Cơ cấu tổ chức:</b> sơ đồ + lưới "Các khối đơn vị" dẫn tới: Ban Giám hiệu, Khoa / Viện, Phòng / Ban, Trung tâm / Viện, Đơn vị trực thuộc, Đội ngũ, Danh sách chuyên gia.</li>
+        <li><b>Chi tiết đơn vị</b> (<span class="path">/gioi-thieu/{phong-ban|trung-tam-vien|don-vi-truc-thuoc}/:id</span>): thẻ hồ sơ (ảnh 4:3 + Trưởng đơn vị / ĐT / Email / năm thành lập + chip số liệu) → panel "Chức năng, nhiệm vụ" + panel "Nhân sự" (bảng Họ tên · Chức vụ · Email).</li>
+        <li><b>Khoa</b> (<span class="path">/gioi-thieu/khoa/:id</span>): thẻ hồ sơ + tab (Ban chủ nhiệm khoa · Bộ môn · Đào tạo). Luồng sâu: <span class="path">/khoa/:id/bo-mon/:bmId</span> (danh sách giảng viên) → <span class="path">.../giang-vien/:gvId</span> (hồ sơ giảng viên: MetaBar + liên hệ + StatRow + giới thiệu + hướng chuyên môn + quá trình đào tạo).</li>
+      </ul>
+
+      <h3>Học tập <span class="tag">/hoc-tap</span></h3>
+      <p>Menu: Tổng quan · Tuyển sinh · Chương trình đào tạo · Chuẩn đầu ra · Thông tin chung · Học phí &amp; Học bổng · Biểu mẫu · Lịch học – Lịch thi · Tra cứu kết quả · Hướng dẫn học tập · E-learning &amp; LMS · Khảo sát &amp; Đánh giá.</p>
+      <ul>
+        <li><b>Hub:</b> StatRow "Đào tạo trong những con số" + lĩnh vực đào tạo + tin học vụ.</li>
+        <li><b>Tuyển sinh</b> (sub-block riêng, menu 11 mục <code>admissionsNav</code>): hub = StatRow + "Phương thức xét tuyển" (StepList) + mốc thời gian + tin + tài liệu. Trang con: Thông tin (bảng chỉ tiêu + tổ hợp), Phương thức, Hồ sơ, Thời gian (timeline), Hướng dẫn (StepList), Tra cứu điểm chuẩn (chọn năm + bảng), Quy chế (DocList), Video (MediaCard), Tư vấn (<strong>form</strong>), FAQ.</li>
+        <li><b>Chương trình đào tạo:</b> danh sách lọc theo khoa/hệ + chi tiết (tab: Tổng quan · Chuẩn đầu ra · Khung chương trình · Cơ hội nghề nghiệp).</li>
+        <li><b>E-learning:</b> lưới "Công cụ học tập" (4 ô có <code>to</code>) + "Truy cập nhanh" (LMS/Teams/Zoom/Thư viện số) + khóa học nổi bật + sidebar DocList hướng dẫn.</li>
+      </ul>
+
+      <h3>Nghiên cứu <span class="tag">/nghien-cuu</span></h3>
+      <p>Menu: Tổng quan · Đề tài / Dự án · Công bố khoa học · Danh sách chuyên gia · Nhóm nghiên cứu · Hội nghị / Hội thảo · Phòng thí nghiệm · Chuyển giao công nghệ · Nghiên cứu sinh.</p>
+      <ul>
+        <li><b>Hub:</b> StatRow KH&amp;CN + lĩnh vực nghiên cứu + tin nghiên cứu nổi bật.</li>
+        <li><b>Đề tài / Công bố:</b> FilterBar (từ khoá + lĩnh vực + trạng thái + năm) + danh sách (thumb + tiêu đề + badge trạng thái: <span style="color:var(--m-get)">Đang thực hiện</span> / <span style="color:var(--warm)">Cấp nhà nước</span> / Cấp Bộ) → chi tiết (tab + thanh tiến độ).</li>
+        <li><b>Chuyên gia:</b> danh sách lọc theo khoa/lĩnh vực → hồ sơ (ảnh + hướng nghiên cứu + công bố + h-index + email).</li>
+      </ul>
+
+      <h3>Hợp tác <span class="tag">/hop-tac</span></h3>
+      <p>Menu: Tổng quan · Danh sách đối tác · Đối tác trong nước · Đối tác quốc tế · Chương trình / Dự án · Chương trình trao đổi · Sinh viên quốc tế · Giảng viên quốc tế · Cơ hội hợp tác.</p>
+      <ul>
+        <li><b>Hub:</b> StatRow + lĩnh vực hợp tác + hoạt động nổi bật theo năm + tin.</li>
+        <li><b>Đối tác:</b> lưới logo lọc theo khu vực/lĩnh vực → chi tiết đối tác. <b>Chương trình / dự án:</b> danh sách + chi tiết (đối tác, thời gian, trạng thái).</li>
+        <li><b>Trao đổi &amp; Học bổng:</b> tab (Trao đổi sinh viên · Học bổng · Chương trình ngắn hạn); quy trình đăng ký (StepList). <b>Cơ hội hợp tác:</b> <strong>form</strong> đăng ký.</li>
+      </ul>
+
+      <h3>Đời sống <span class="tag">/doi-song</span></h3>
+      <p>Menu 11 mục: Hub · Campus &amp; Cơ sở vật chất · Hoạt động sinh viên · Câu lạc bộ · Đoàn – Hội · Thể thao – Văn hóa · Ký túc xá · Y tế · Dịch vụ Campus · Hỗ trợ sinh viên · Việc làm – Khởi nghiệp. <em>Tông navy đồng bộ (đã bỏ tông xanh lá cũ).</em></p>
+      <ul>
+        <li><b>Hub:</b> banner + StatRow + "Điểm nhấn đời sống sinh viên" (TileGrid highlight) + tin nổi bật; sidebar "Sự kiện sắp diễn ra".</li>
+        <li><b>Hoạt động / CLB / Việc làm:</b> đều có danh sách + chi tiết. <b>Y tế:</b> nhóm thẻ chăm sóc sức khỏe. <b>KTX / Dịch vụ:</b> thông tin + bảng.</li>
+      </ul>
+
+      <h3>Thư viện <span class="tag">/thu-vien</span></h3>
+      <p>Menu: Tổng quan · Tìm tài liệu · Bộ sưu tập · Tài liệu của tôi · CSDL khoa học · Thư viện số · Hướng dẫn sử dụng.</p>
+      <ul>
+        <li><b>Hub:</b> ô tra cứu nhanh + StatRow + dịch vụ thư viện + tin.</li>
+        <li><b>Tìm tài liệu</b> (<span class="path">/thu-vien/tim-kiem</span>): FilterBar (loại tài liệu, năm, ngôn ngữ) + kết quả phân trang + chi tiết tài liệu.</li>
+        <li><b>Thư viện số</b> (<span class="path">/thu-vien-so</span>): lưới truy cập theo loại (link kèm query <code>?loai=</code>) + CSDL ngoài + tài liệu mới (FilterBar) + StatRow.</li>
+      </ul>
+
+      <h3>Sinh viên &amp; Giảng viên / Cán bộ (công khai) <span class="tag">/sinh-vien · /giang-vien</span></h3>
+      <p>Trang <strong>thông tin chung</strong> (không cá nhân hoá). Nội dung chủ yếu là bài viết / bảng / DocList do CMS quản lý + "Truy cập nhanh" (phím tắt liên khối, trỏ sang <span class="path">/hoc-tap/*</span>, <span class="path">/thu-vien/*</span>, <span class="path">/dang-nhap</span>) + FAQ + Sổ tay tân sinh viên. Nút "Đăng nhập eUni" dẫn sang My eUni Portal.</p>
+
+      <h3>Tiện ích <span class="tag">/tien-ich</span></h3>
+      <p>Hub: <code>HeroSearch</code> + sidebar ("Dùng nhiều nhất" + SupportCard CNTT) + 3 Panel nhóm (<code>utilityGroups</code>: Dành cho tất cả / Sinh viên / Giảng viên · Cán bộ), TileGrid <code>cols=3</code>. Trang con: <b>Webmail</b> (nút mở hộp thư ngoài + hướng dẫn + FAQ), <b>Lịch công tác</b> (<span class="path">/lich-cong-tac</span> — lưới 7 ngày + thanh chọn tuần), <b>Liên hệ</b> (<span class="path">/lien-he</span> — thẻ liên hệ + <strong>form</strong> + bản đồ + giờ làm việc + FAQ).</p>
+
+      <h3>Tin tức · Sự kiện · Media <span class="tag">/tin-tuc · /su-kien · /media</span></h3>
+      <ul>
+        <li><b>Tin tức:</b> danh sách lọc theo danh mục (<code>newsCategories</code>) + phân trang; chi tiết (<span class="path">/tin-tuc/:slug</span>) — nội dung bài + ShareBar + tin liên quan + từ khoá.</li>
+        <li><b>Sự kiện:</b> danh sách + chi tiết (<span class="path">/su-kien/:slug</span>) — thời gian, địa điểm, đăng ký.</li>
+        <li><b>Media:</b> tab Ảnh / Video / Podcast; chi tiết album (<span class="path">/media/anh/:slug</span>, <code>Lightbox</code>), video, podcast.</li>
+        <li><b>Tìm kiếm toàn cục</b> (<span class="path">/tim-kiem?q=</span>): kết quả gộp có bộ lọc loại nội dung.</li>
+      </ul>
+
+      <h3>Xác thực <span class="tag">/dang-nhap …</span></h3>
+      <p><code>AuthLayout</code>: nền gradient navy, thẻ trắng giữa màn, logo 60 năm ở đầu. Trang: <b>Đăng nhập SSO</b> (username/email/MSCB + mật khẩu + ghi nhớ + "hoặc đăng nhập với Microsoft 365" + cổng demo theo vai trò), <b>Đăng nhập phụ huynh</b>, <b>Quên mật khẩu</b> (nhập email), <b>Đổi mật khẩu</b> (mật khẩu cũ/mới + yêu cầu độ mạnh). Đã responsive: căn <code>flex-start</code> + panel <code>margin:auto 0</code> để cuộn được khi form cao hơn màn hình; ≤480px thu padding.</p>
+    </section>
+
+    <!-- ============ §6 ============ -->
+    <section id="s6">
+      <div class="s-head"><span class="no">§6</span><h2>My eUni Portal &amp; CMS</h2></div>
+      <p>Khác biệt: <strong>bắt buộc đăng nhập</strong>, dữ liệu cá nhân hoá, dùng <code>PortalLayout</code> (sidebar navy cuộn độc lập + topbar có chuông thông báo &amp; nút "Thoát cổng" ở góc phải).</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Portal</th><th>Base</th><th>Persona demo</th><th>Nhóm chức năng chính</th></tr></thead>
+        <tbody>
+          <tr><td><b>Sinh viên</b></td><td><span class="path">/euni/sinh-vien</span></td><td>Nguyễn Văn A · 21SC01234</td><td>Tổng quan, TKB, kết quả học tập, tài chính, đăng ký học phần / đồ án / thực tập, tiến độ, biểu mẫu, ticket hỗ trợ, thư viện &amp; e-learning.</td></tr>
+          <tr><td><b>Giảng viên</b></td><td><span class="path">/euni/giang-vien</span></td><td>TS. Nguyễn Văn A</td><td>Lịch giảng dạy, quản lý lớp / học phần, nhập điểm, NCKH &amp; CSDL khoa học, học liệu số, công tác – hành chính, hướng dẫn đồ án, thực tập DN.</td></tr>
+          <tr><td><b>Phụ huynh</b></td><td><span class="path">/euni/phu-huynh</span></td><td>Trần Thị Lan</td><td>Thông tin sinh viên, kết quả học tập, điểm danh, học phí &amp; thanh toán, lịch học, đăng ký dịch vụ, liên hệ nhà trường.</td></tr>
+          <tr><td><b>Lãnh đạo</b></td><td><span class="path">/euni/lanh-dao</span></td><td>PGS.TS. Trần Xuân Trường · Hiệu trưởng</td><td>Tổng quan điều hành, chỉ số BI, chuyên đề (đào tạo / NCKH / SV / tài chính / nhân sự / CSVC), báo cáo, cảnh báo &amp; phê duyệt, quản trị hệ thống.</td></tr>
+          <tr><td><b>CMS</b></td><td><span class="path">/cms</span></td><td>Super Admin</td><td>Bài viết, danh mục, media, trang &amp; menu, sự kiện / tuyển sinh / nghiên cứu / học tập, banner-slider, người dùng &amp; phân quyền, cấu hình, nhật ký, sao lưu.</td></tr>
+        </tbody>
+      </table></div>
+      <p>Nguồn cấu hình: <code>portals[]</code> &amp; <code>cmsConfig</code> trong <code>sitemap.js</code> (mỗi phần có <code>items[]{path,title,icon,hidden}</code>, <code>notifications[]</code>). Chi tiết portal nằm ngoài phạm vi tài liệu này.</p>
+    </section>
+
+    <!-- ============ §7 ============ -->
+    <section id="s7">
+      <div class="s-head"><span class="no">§7</span><h2>Responsive &amp; tiếp cận</h2></div>
+      <h3>Điểm ngắt</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>≤ px</th><th>Thay đổi chính</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1280</td><td>Sidebar khối chuyển ngang (flex-wrap); lưới content-block 1.5fr; trang chủ thu tỉ lệ cột.</td></tr>
+          <tr><td class="num">1080</td><td>Content-block về 2 cột (panel tin chiếm cả hàng); "Dành cho bạn" / QuickBar giảm số cột; hero photo hẹp lại.</td></tr>
+          <tr><td class="num">960</td><td><code>.pg-body</code> về 1 cột; <code>.pg-nav</code> thành thanh disclosure; <code>.pg-aside</code> về static; TileGrid 2 cột.</td></tr>
+          <tr><td class="num">900</td><td>Mục lục tài liệu / hero trang chủ: ảnh nền phủ toàn khung, giảm overlap QuickBar.</td></tr>
+          <tr><td class="num">720</td><td>Content-block 1 cột; "Dành cho bạn" 2 cột; footer 2 cột.</td></tr>
+          <tr><td class="num">560</td><td>TileGrid / "Dành cho bạn" 1 cột; footer 1 cột; auth thu padding (≤480).</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Tiếp cận</h3>
+      <ul>
+        <li>Semantic: <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, heading theo cấp; breadcrumb có <code>aria-label</code>.</li>
+        <li><code>:focus-visible</code> có viền rõ; menu drawer / dropdown đóng bằng <kbd>Esc</kbd> và click ngoài.</li>
+        <li>Tôn trọng <code>prefers-reduced-motion</code>; slider hero tự chạy phải có nút điều hướng (dots).</li>
+        <li>Bảng rộng luôn bọc <code>overflow-x:auto</code>; body không cuộn ngang.</li>
+        <li>Ảnh placeholder có text mô tả; khi thay <code>&lt;img&gt;</code> thật phải có <code>alt</code>.</li>
+        <li>Chưa hỗ trợ: dark mode, bản EN thực (nút VI/EN đã có UI). Cần bổ sung khi tích hợp API.</li>
+      </ul>
+    </section>
+
+    <!-- ============ §8 ============ -->
+    <section id="s8">
+      <div class="s-head"><span class="no">§8</span><h2>Danh sách API</h2></div>
+      <p>Đề xuất REST, tiền tố <code>/api/v1</code>. Danh sách gộp phản hồi (envelope): <code>{ data: [...], meta: { page, limit, total } }</code>; chi tiết: <code>{ data: {...} }</code>. Tham số chung cho list: <code>page</code>, <code>limit</code>, <code>q</code>, <code>sort</code>, <code>lang</code> (<code>vi</code>|<code>en</code>). Cột <b>Auth</b>: <span class="auth pub">công khai</span> · <span class="auth">SV</span>/<span class="auth">GV</span>/<span class="auth">PH</span>/<span class="auth">LĐ</span> (vai trò) · <span class="auth">Admin</span> (CMS).</p>
+
+      <h3>8.1 · Chung &amp; điều hướng</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Method</th><th>Path</th><th>Mô tả</th><th>Tham số / Body</th><th>Auth</th></tr></thead>
+        <tbody>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/config/site</span></td><td>Cấu hình chung: tên trường, logo, địa chỉ, hotline, mạng xã hội, link app store, năm học hiện tại.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/navigation/header</span></td><td>Cây menu header (5 dropdown + 3 link nhanh) + menu drawer mobile.</td><td><code>lang</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/navigation/footer</span></td><td>Các cột footer + liên kết.</td><td><code>lang</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/navigation/section/:block</span></td><td>Section-nav của một khối (vd <code>gioi-thieu</code>, <code>hoc-tap</code>) — dùng cho <code>SectionNav</code>.</td><td><code>lang</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/search</span></td><td>Tìm kiếm toàn cục (tin, trang, tài liệu, sự kiện, chương trình…).</td><td><code>q</code> (bắt buộc), <code>type</code>, <code>page</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/search/suggest</span></td><td>Gợi ý nhập nhanh cho ô tìm ở header.</td><td><code>q</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m post">POST</span></td><td><span class="path">/contact</span></td><td>Gửi form Liên hệ (<span class="path">/lien-he</span>).</td><td><code>{ name, email, phone?, subject, message }</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m post">POST</span></td><td><span class="path">/newsletter/subscribe</span></td><td>Đăng ký nhận bản tin (footer / trang tin).</td><td><code>{ email }</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/i18n/:lang</span></td><td>Gói chuỗi giao diện theo ngôn ngữ.</td><td><code>lang ∈ {vi,en}</code></td><td class="auth pub">công khai</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>8.2 · Trang chủ &amp; nội dung động (CMS-driven)</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Method</th><th>Path</th><th>Mô tả</th><th>Tham số / Body</th><th>Auth</th></tr></thead>
+        <tbody>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/home</span></td><td>Toàn bộ dữ liệu trang chủ: slides, chips, quick links, audiences, strengths, tin nổi bật, danh sách tin, sự kiện sắp tới, media tabs, đối tác.</td><td><code>lang</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/banners</span></td><td>Banner / slider theo vị trí hiển thị.</td><td><code>position</code> (<code>home-hero</code>, …)</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/news</span></td><td>Danh sách bài viết, lọc theo danh mục / khối / từ khoá.</td><td><code>category</code>, <code>block</code>, <code>q</code>, <code>page</code>, <code>featured</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/news/:slug</span></td><td>Chi tiết bài viết + tăng lượt xem.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/news/:slug/related</span></td><td>Tin liên quan (cùng danh mục / từ khoá).</td><td><code>limit</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/news/categories</span></td><td>Danh mục tin (Tin tức, Thông báo, Tuyển sinh, Hợp tác, Nghiên cứu, Sự kiện).</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/events</span></td><td>Danh sách sự kiện (sắp diễn ra / đã diễn ra).</td><td><code>status</code>, <code>from</code>, <code>to</code>, <code>page</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/events/:slug</span></td><td>Chi tiết sự kiện.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m post">POST</span></td><td><span class="path">/events/:slug/register</span></td><td>Đăng ký tham dự sự kiện.</td><td><code>{ name, email, phone, unit? }</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/media/albums</span></td><td>Album ảnh / video / podcast theo tab.</td><td><code>kind ∈ {photo,video,podcast}</code>, <code>page</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/media/albums/:kind/:slug</span></td><td>Chi tiết album (danh sách ảnh / URL video / audio).</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/pages/:path</span></td><td>Trang tĩnh do CMS quản lý (nội dung khối Sinh viên / Giảng viên công khai, Đoàn – Hội, …).</td><td><code>lang</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/work-calendar</span></td><td>Lịch công tác tuần (<span class="path">/lich-cong-tac</span>).</td><td><code>week</code> (ISO), hoặc <code>offset</code></td><td class="auth pub">công khai</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>8.3 · Giới thiệu / Về trường</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Method</th><th>Path</th><th>Mô tả</th><th>Tham số / Body</th><th>Auth</th></tr></thead>
+        <tbody>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/about/overview</span></td><td>Tổng quan: giới thiệu, StatRow, giá trị theo đuổi.</td><td><code>lang</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/about/rector-message</span></td><td>Thông điệp Hiệu trưởng (ảnh, chức danh, các đoạn, trích dẫn).</td><td><code>lang</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/about/history</span></td><td>Lịch sử phát triển (mốc năm + mô tả).</td><td><code>lang</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/about/vision</span></td><td>Sứ mạng – Tầm nhìn – Giá trị cốt lõi.</td><td><code>lang</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/about/achievements</span></td><td>Thành tựu nổi bật (4 nhóm: đào tạo / nghiên cứu / hợp tác / giải thưởng).</td><td><code>group</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/about/figures</span></td><td>HUMG qua các con số (số lớn, quy mô tuyển sinh, công bố, đội ngũ).</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/about/org-chart</span></td><td>Sơ đồ cơ cấu tổ chức + các khối đơn vị.</td><td><code>lang</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/about/board</span></td><td>Ban Giám hiệu (Hiệu trưởng + các Phó Hiệu trưởng).</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/units</span></td><td>Danh sách đơn vị theo loại.</td><td><code>kind ∈ {khoa,phong-ban,trung-tam-vien,don-vi-truc-thuoc}</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/units/:kind/:id</span></td><td>Chi tiết đơn vị: mô tả, trưởng đơn vị, ĐT, email, năm thành lập, chức năng, <code>staff[]</code> (Họ tên · Chức vụ · Email); với khoa: <code>board[]</code>, <code>departments[]</code>, <code>majors[]</code>.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/units/khoa/:id/departments/:bmId</span></td><td>Chi tiết bộ môn: mô tả, trưởng bộ môn, hướng nghiên cứu, <code>lecturers[]</code>.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/lecturers/:id</span></td><td>Hồ sơ giảng viên: chức danh, bộ môn/khoa, hướng chuyên môn, số công bố, email, ĐT, quá trình đào tạo.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/faculty/summary</span></td><td>Đội ngũ cán bộ, giảng viên: số liệu tổng, quy mô theo khoa, chính sách phát triển.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/directory</span></td><td>Danh bạ đơn vị &amp; số máy nội bộ (<span class="path">/giang-vien/danh-ba</span>).</td><td><code>q</code>, <code>unit</code>, <code>page</code></td><td class="auth pub">công khai</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>8.4 · Tuyển sinh</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Method</th><th>Path</th><th>Mô tả</th><th>Tham số / Body</th><th>Auth</th></tr></thead>
+        <tbody>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/admissions/overview</span></td><td>Hub tuyển sinh: số liệu, mốc thời gian gần nhất, tài liệu, tin.</td><td><code>year</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/admissions/info</span></td><td>Chỉ tiêu dự kiến + ngành đào tạo &amp; tổ hợp xét tuyển.</td><td><code>year</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/admissions/methods</span></td><td>Danh sách phương thức xét tuyển + điều kiện.</td><td><code>year</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/admissions/dossier</span></td><td>Hồ sơ chung + hồ sơ theo phương thức đặc thù + nơi nộp.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/admissions/timeline</span></td><td>Các mốc thời gian tuyển sinh.</td><td><code>year</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/admissions/benchmarks</span></td><td>Điểm chuẩn các năm theo ngành + tổ hợp.</td><td><code>year</code>, <code>major</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/admissions/regulations</span></td><td>Quy chế / đề án tuyển sinh (DocList).</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/admissions/videos</span></td><td>Video giới thiệu ngành.</td><td><code>major</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/admissions/faq</span></td><td>Câu hỏi thường gặp về tuyển sinh.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m post">POST</span></td><td><span class="path">/admissions/advisory</span></td><td>Form "Đăng ký được tư vấn" (họ tên, SĐT, email, ngành quan tâm, nội dung).</td><td><code>{ name, phone, email, major, message }</code></td><td class="auth pub">công khai</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>8.5 · Đào tạo</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Method</th><th>Path</th><th>Mô tả</th><th>Tham số / Body</th><th>Auth</th></tr></thead>
+        <tbody>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/education/overview</span></td><td>Hub Học tập: số liệu đào tạo, lĩnh vực, tin học vụ.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/programs</span></td><td>Danh sách chương trình đào tạo, lọc theo khoa / hệ / lĩnh vực.</td><td><code>faculty</code>, <code>mode</code>, <code>q</code>, <code>page</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/programs/:id</span></td><td>Chi tiết chương trình: tổng quan, chuẩn đầu ra, khung chương trình, cơ hội nghề nghiệp, tài liệu.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/education/outcomes</span></td><td>Chuẩn đầu ra chung.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/education/general-info</span></td><td>Thông tin chung / quy chế đào tạo.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/tuition</span></td><td>Học phí &amp; học bổng: mức thu theo hệ + tài liệu quy định + loại học bổng.</td><td><code>year</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/forms</span></td><td>Kho biểu mẫu, lọc theo nhóm + định dạng.</td><td><code>category</code>, <code>type</code>, <code>q</code>, <code>sort</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/forms/:id/download</span></td><td>Tải file biểu mẫu (redirect tới file lưu trữ).</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/academic-calendar</span></td><td>Lịch học – lịch thi (kế hoạch năm học, lịch thi theo học kỳ).</td><td><code>term</code>, <code>faculty</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/education/guides</span></td><td>Hướng dẫn học tập (chủ đề: đăng ký học phần, học lại, xét tốt nghiệp, cố vấn học tập…).</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/elearning/overview</span></td><td>E-learning &amp; LMS: liên kết hệ thống (LMS/Teams/Zoom), khóa học nổi bật, tài liệu hướng dẫn.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/me/academic-results</span></td><td>Tra cứu kết quả học tập của người đang đăng nhập (điểm, GPA, tiến độ).</td><td><code>term</code></td><td class="auth">SV</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/surveys/open</span></td><td>Khảo sát &amp; đánh giá đang mở (danh sách).</td><td>—</td><td class="auth">SV/GV</td></tr>
+          <tr><td><span class="m post">POST</span></td><td><span class="path">/surveys/:id/responses</span></td><td>Gửi phản hồi khảo sát.</td><td><code>{ answers[] }</code></td><td class="auth">SV/GV</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>8.6 · Nghiên cứu khoa học</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Method</th><th>Path</th><th>Mô tả</th><th>Tham số / Body</th><th>Auth</th></tr></thead>
+        <tbody>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/research/overview</span></td><td>Hub: số liệu KH&amp;CN, lĩnh vực trọng điểm, tin nghiên cứu.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/research/projects</span></td><td>Đề tài / dự án, lọc theo lĩnh vực / cấp / trạng thái / năm.</td><td><code>field</code>, <code>level</code>, <code>status</code>, <code>year</code>, <code>q</code>, <code>page</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/research/projects/:id</span></td><td>Chi tiết đề tài: chủ nhiệm, thành viên, kinh phí, tiến độ, sản phẩm.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/research/publications</span></td><td>Công bố khoa học, lọc theo loại (SCI/Scopus/trong nước) / năm.</td><td><code>type</code>, <code>year</code>, <code>q</code>, <code>page</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/research/publications/:id</span></td><td>Chi tiết công bố (tác giả, tạp chí, năm, lượt xem, DOI).</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/research/journals</span></td><td>Tạp chí &amp; ấn phẩm của Trường.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/research/groups</span></td><td>Nhóm nghiên cứu (list + <span class="path">/:id</span> chi tiết).</td><td><code>field</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/research/conferences</span></td><td>Hội nghị / hội thảo KH&amp;CN (list + <span class="path">/:slug</span>).</td><td><code>status</code>, <code>year</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/research/labs</span></td><td>Phòng thí nghiệm (list + <span class="path">/:id</span>).</td><td><code>field</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/research/tech-transfer</span></td><td>Chuyển giao công nghệ: số liệu, đối tác tiêu biểu, sản phẩm &amp; giải pháp.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/research/phd</span></td><td>Thông tin nghiên cứu sinh.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/experts</span></td><td>Danh sách chuyên gia, lọc theo khoa / lĩnh vực.</td><td><code>faculty</code>, <code>field</code>, <code>q</code>, <code>page</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/experts/:id</span></td><td>Hồ sơ chuyên gia: hướng nghiên cứu, công bố, h-index, đề tài, liên hệ.</td><td>—</td><td class="auth pub">công khai</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>8.7 · Hợp tác</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Method</th><th>Path</th><th>Mô tả</th><th>Tham số / Body</th><th>Auth</th></tr></thead>
+        <tbody>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/cooperation/overview</span></td><td>Hub: số liệu, lĩnh vực hợp tác, hoạt động nổi bật theo năm, tin.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/partners</span></td><td>Danh sách đối tác, lọc theo khu vực (trong / ngoài nước) / lĩnh vực.</td><td><code>region</code>, <code>field</code>, <code>q</code>, <code>page</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/partners/:id</span></td><td>Chi tiết đối tác: giới thiệu, lĩnh vực hợp tác, chương trình liên quan.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/cooperation/programs</span></td><td>Chương trình / dự án hợp tác (list + <span class="path">/:id</span>).</td><td><code>status</code>, <code>partner</code>, <code>year</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/cooperation/conferences</span></td><td>Hội thảo – hội nghị hợp tác.</td><td><code>status</code>, <code>year</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/cooperation/exchange</span></td><td>Trao đổi &amp; học bổng: chương trình trao đổi SV, học bổng, chương trình ngắn hạn, quy trình đăng ký.</td><td><code>tab</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/cooperation/international-students</span></td><td>Thông tin cho sinh viên / giảng viên quốc tế.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m post">POST</span></td><td><span class="path">/cooperation/inquiry</span></td><td>Form "Cơ hội hợp tác".</td><td><code>{ org, contact, email, field, message }</code></td><td class="auth pub">công khai</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>8.8 · Đời sống sinh viên</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Method</th><th>Path</th><th>Mô tả</th><th>Tham số / Body</th><th>Auth</th></tr></thead>
+        <tbody>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/life/overview</span></td><td>Hub: banner, số liệu, điểm nhấn đời sống, tin nổi bật, sự kiện sắp diễn ra.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/life/campus</span></td><td>Campus &amp; cơ sở vật chất (cơ sở đào tạo, tiện ích).</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/life/activities</span></td><td>Hoạt động sinh viên (list + <span class="path">/:slug</span>).</td><td><code>type</code>, <code>status</code>, <code>page</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/life/clubs</span></td><td>Câu lạc bộ (list theo lĩnh vực + <span class="path">/:id</span>).</td><td><code>field</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/life/union</span></td><td>Đoàn – Hội.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/life/sports-culture</span></td><td>Thể thao – văn hóa (giải đấu nổi bật, CLB thể thao).</td><td><code>tab</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/life/dormitory</span></td><td>Ký túc xá: khu, sức chứa, giá, đăng ký.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/life/health</span></td><td>Y tế – chăm sóc sức khỏe (dịch vụ y tế, hỗ trợ, bài viết).</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/life/campus-services</span></td><td>Dịch vụ campus (căng tin, wifi, in ấn, ngân hàng, xe buýt…).</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/life/student-support</span></td><td>Hỗ trợ sinh viên: kênh hỗ trợ + hỗ trợ trực tuyến.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/jobs</span></td><td>Việc làm – khởi nghiệp: tin tuyển dụng (list + <span class="path">/:id</span>), đối tác tuyển dụng, dịch vụ hỗ trợ.</td><td><code>type</code>, <code>field</code>, <code>page</code></td><td class="auth pub">công khai</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>8.9 · Thư viện</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Method</th><th>Path</th><th>Mô tả</th><th>Tham số / Body</th><th>Auth</th></tr></thead>
+        <tbody>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/library/overview</span></td><td>Hub: số liệu, dịch vụ thư viện, tin.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/library/resources</span></td><td>Tìm tài liệu: kết quả + lọc (loại, năm, ngôn ngữ) + phân trang.</td><td><code>q</code>, <code>type</code>, <code>year</code>, <code>lang</code>, <code>page</code>, <code>sort</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/library/resources/:id</span></td><td>Chi tiết tài liệu (mô tả thư mục, số bản, vị trí, link đọc).</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/library/collections</span></td><td>Bộ sưu tập nổi bật.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/library/databases</span></td><td>CSDL khoa học trong nước &amp; quốc tế (Scopus, ScienceDirect…).</td><td><code>scope</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/library/digital</span></td><td>Thư viện số: truy cập theo loại, tài liệu mới, số liệu.</td><td><code>loai</code>, <code>q</code>, <code>page</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/library/guides</span></td><td>Hướng dẫn sử dụng + video hướng dẫn.</td><td>—</td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/me/library</span></td><td>Tài liệu của tôi: đang mượn, lịch sử, đặt trước, gia hạn.</td><td>—</td><td class="auth">SV/GV</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>8.10 · Xác thực &amp; tài khoản</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Method</th><th>Path</th><th>Mô tả</th><th>Tham số / Body</th><th>Auth</th></tr></thead>
+        <tbody>
+          <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/login</span></td><td>Đăng nhập SSO (username / email / mã số + mật khẩu). Trả access + refresh token, hồ sơ, vai trò.</td><td><code>{ username, password, remember }</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/auth/sso/microsoft</span></td><td>Khởi tạo luồng đăng nhập Microsoft 365 (redirect OAuth).</td><td><code>redirect_uri</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/login/parent</span></td><td>Đăng nhập phụ huynh (email đã đăng ký + mật khẩu).</td><td><code>{ email, password, remember }</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/refresh</span></td><td>Làm mới access token.</td><td><code>{ refreshToken }</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/logout</span></td><td>Đăng xuất, thu hồi refresh token.</td><td>—</td><td class="auth">mọi vai trò</td></tr>
+          <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/forgot-password</span></td><td>Gửi email hướng dẫn đặt lại mật khẩu.</td><td><code>{ email }</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/reset-password</span></td><td>Đặt lại mật khẩu bằng token trong email.</td><td><code>{ token, password }</code></td><td class="auth pub">công khai</td></tr>
+          <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/change-password</span></td><td>Đổi mật khẩu (đang đăng nhập).</td><td><code>{ current, next }</code></td><td class="auth">mọi vai trò</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/me</span></td><td>Hồ sơ + vai trò + quyền của người đang đăng nhập (dựng menu portal, gate route).</td><td>—</td><td class="auth">mọi vai trò</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/me/notifications</span></td><td>Danh sách thông báo (chuông topbar portal) + số chưa đọc.</td><td><code>page</code>, <code>unread</code></td><td class="auth">mọi vai trò</td></tr>
+          <tr><td><span class="m put">PUT</span></td><td><span class="path">/me/notifications/:id/read</span></td><td>Đánh dấu đã đọc.</td><td>—</td><td class="auth">mọi vai trò</td></tr>
+          <tr><td><span class="m post">POST</span></td><td><span class="path">/support/tickets</span></td><td>Tạo ticket hỗ trợ (portal).</td><td><code>{ subject, category, message, attachments[] }</code></td><td class="auth">SV/GV</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>8.11 · CMS (quản trị nội dung)</h3>
+      <p>Toàn bộ yêu cầu <span class="auth">Admin</span> theo phân quyền vai trò. Chỉ liệt kê nhóm chính — CRUD chuẩn.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Method</th><th>Path</th><th>Mô tả</th><th>Auth</th></tr></thead>
+        <tbody>
+          <tr><td><span class="m get">GET</span> <span class="m post">POST</span> <span class="m put">PUT</span> <span class="m del">DEL</span></td><td><span class="path">/cms/articles</span> · <span class="path">/cms/articles/:id</span></td><td>Bài viết: soạn / sửa / xoá / đặt lịch / gửi duyệt / xuất bản. Trạng thái: nháp, chờ duyệt, xuất bản.</td><td class="auth">Admin</td></tr>
+          <tr><td><span class="m get">GET</span> <span class="m post">POST</span> <span class="m put">PUT</span> <span class="m del">DEL</span></td><td><span class="path">/cms/categories</span></td><td>Danh mục nội dung (cây).</td><td class="auth">Admin</td></tr>
+          <tr><td><span class="m get">GET</span> <span class="m post">POST</span> <span class="m del">DEL</span></td><td><span class="path">/cms/media</span></td><td>Media thư viện: tải lên, gắn thẻ, xoá; trả URL + biến thể kích thước.</td><td class="auth">Admin</td></tr>
+          <tr><td><span class="m get">GET</span> <span class="m post">POST</span> <span class="m put">PUT</span> <span class="m del">DEL</span></td><td><span class="path">/cms/events</span></td><td>Sự kiện.</td><td class="auth">Admin</td></tr>
+          <tr><td><span class="m get">GET</span> <span class="m post">POST</span> <span class="m put">PUT</span> <span class="m del">DEL</span></td><td><span class="path">/cms/banners</span></td><td>Banner / slider theo vị trí + thời gian hiệu lực.</td><td class="auth">Admin</td></tr>
+          <tr><td><span class="m get">GET</span> <span class="m put">PUT</span></td><td><span class="path">/cms/pages</span> · <span class="path">/cms/menus</span></td><td>Trang tĩnh &amp; cấu trúc menu (header / footer / section-nav).</td><td class="auth">Admin</td></tr>
+          <tr><td><span class="m get">GET</span> <span class="m put">PUT</span></td><td><span class="path">/cms/blocks/:block</span></td><td>Nội dung có cấu trúc của từng khối (tuyển sinh, học phí, cơ cấu tổ chức, số liệu…) — nguồn cho các API mục 8.3–8.9.</td><td class="auth">Admin</td></tr>
+          <tr><td><span class="m get">GET</span> <span class="m post">POST</span> <span class="m put">PUT</span></td><td><span class="path">/cms/users</span> · <span class="path">/cms/roles</span></td><td>Người dùng &amp; vai trò / phân quyền.</td><td class="auth">Admin</td></tr>
+          <tr><td><span class="m get">GET</span> <span class="m put">PUT</span></td><td><span class="path">/cms/settings</span></td><td>Cấu hình hệ thống (SEO, SMTP, tích hợp, ngôn ngữ).</td><td class="auth">Admin</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/cms/audit-log</span></td><td>Nhật ký hoạt động.</td><td class="auth">Admin</td></tr>
+          <tr><td><span class="m get">GET</span> <span class="m post">POST</span></td><td><span class="path">/cms/backups</span></td><td>Sao lưu &amp; phục hồi.</td><td class="auth">Admin</td></tr>
+          <tr><td><span class="m get">GET</span></td><td><span class="path">/cms/submissions</span></td><td>Xem các form gửi lên (liên hệ, tư vấn tuyển sinh, cơ hội hợp tác, đăng ký sự kiện).</td><td class="auth">Admin</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="note"><b>Ghi chú kỹ thuật:</b> tất cả text có phiên bản <code>vi</code>/<code>en</code> (tham số <code>lang</code>); thời gian trả về ISO-8601; ảnh trả kèm nhiều kích thước + <code>alt</code>; endpoint list hỗ trợ <code>ETag</code>/<code>Cache-Control</code> vì phần lớn là nội dung tĩnh; endpoint <code>/me/*</code> yêu cầu <code>Authorization: Bearer</code>.</div>
+    </section>
+
+    <!-- ============ §9 ============ -->
+    <section id="s9">
+      <div class="s-head"><span class="no">§9</span><h2>Bàn giao &amp; quy ước</h2></div>
+      <h3>Chuyển mock → API</h3>
+      <ul>
+        <li>Data hiện ở <code>src/data/*.js</code> (mỗi khối một file). Thay bằng lớp <code>src/api/*.ts</code> gọi endpoint tương ứng (§8) + hook <code>useQuery</code>; giữ nguyên hình dạng object để component không phải sửa.</li>
+        <li>Component UI (<code>components/ui/page.jsx</code>) <strong>không</strong> gọi API — trang (<code>pages/*/index.jsx</code>) nạp data rồi truyền xuống props.</li>
+        <li>Placeholder <code>humg-ph</code> → <code>&lt;img&gt;</code> khi có URL media; giữ đúng <code>data-ratio</code>.</li>
+      </ul>
+      <h3>Trạng thái tải &amp; lỗi</h3>
+      <ul>
+        <li>Skeleton theo hình dạng component (Panel, StatRow, bảng) — không spinner toàn trang.</li>
+        <li>Lỗi tải khối: hộp thông báo trong Panel + nút "Thử lại"; không làm hỏng cả trang.</li>
+        <li>Danh sách rỗng sau lọc: dòng "Không tìm thấy… phù hợp" (đã có ở FilterBar).</li>
+        <li>Form: xác thực phía client + hiển thị lỗi từng trường; toast "Đã gửi" khi thành công.</li>
+      </ul>
+      <h3>Route &amp; SEO</h3>
+      <ul>
+        <li>Nguồn route: <code>src/routes/sitemap.js</code> (<code>publicRoutes = collectFromNav() + standalonePublic + detailPublic</code>). Khi bỏ mục khỏi menu vẫn phải giữ route (chuyển sang <code>standalonePublic</code>).</li>
+        <li>Mỗi trang set <code>&lt;title&gt;</code>, meta description, canonical, OpenGraph từ dữ liệu API.</li>
+        <li>Cân nhắc SSR/prerender cho các trang nội dung (tin tức, giới thiệu, chương trình) để SEO.</li>
+      </ul>
+      <h3>Quy ước code</h3>
+      <ul>
+        <li>CSS: dùng token <code>--humg-*</code>, không hardcode màu; class theo BEM nhẹ (<code>.block__el</code>, <code>.is-active</code>).</li>
+        <li>Icon: chỉ dùng tên có trong <code>Icon.jsx</code> (§2); tên có gạch nối để trong ngoặc kép.</li>
+        <li><code>FilterBar.sortOptions</code> nhận mảng chuỗi. <code>Pagination</code> hiện chỉ hiển thị — nối handler khi có API phân trang.</li>
+        <li>Build: <code>npm run build</code> (Vite). Kiểm tra link chết trước khi bàn giao.</li>
+      </ul>
+    </section>
+
+    <footer class="doc">
+      HUMG Digital Portal — Frontend design spec · v1 · 2026-09-01 · Trường Đại học Mỏ - Địa chất
+    </footer>
+  </main>
+</div>
